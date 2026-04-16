@@ -1,0 +1,3280 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>探索廣告 · 財務管理系統（管理版）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#0f0f0f; --surface:#1a1a1a; --surface2:#242424; --border:#2e2e2e;
+  --accent:#c8a96e; --accent2:#7eb8a4; --accent3:#a87bbf;
+  --danger:#e07070; --warn:#d4924a;
+  --text:#e8e2d9; --text2:#8a8480; --text3:#5a5652;
+  --radius:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px;min-height:100vh;}
+
+/* HEADER */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:200;}
+.logo{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.05em;}
+.logo span{color:var(--text2);font-weight:300;}
+
+/* NAV */
+.nav-wrap{display:flex;gap:2px;overflow-x:auto;padding:0 2px;}
+.nav-tab{padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text2);border:none;background:none;white-space:nowrap;transition:all .15s;}
+.nav-tab:hover{color:var(--text);background:var(--surface2);}
+.nav-tab.active{color:var(--accent);background:var(--surface2);}
+
+/* LAYOUT */
+.container{max-width:1080px;margin:0 auto;padding:20px 16px;}
+.page{display:none;}.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+.card-title{font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--text2);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;color:var(--text2);}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-family:inherit;font-size:13px;width:100%;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+input[type=number],input[type=date]{font-family:'DM Mono',monospace;}
+textarea{resize:vertical;min-height:60px;}
+
+/* BUTTONS */
+.btn{padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:all .15s;}
+.btn-primary{background:var(--accent);color:#1a1410;}
+.btn-primary:hover{background:#d4b87a;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger);}
+.btn-danger:hover{background:var(--danger);color:#fff;}
+.btn-sm{padding:4px 10px;font-size:12px;}
+
+/* SECTION HEADER */
+.sec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.sec-title{font-size:16px;font-weight:500;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:11px;letter-spacing:.06em;color:var(--text3);text-transform:uppercase;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tbody tr:hover td{background:var(--surface2);}
+.mono{font-family:'DM Mono',monospace;}
+.amt{font-family:'DM Mono',monospace;color:var(--accent);}
+.amt-in{font-family:'DM Mono',monospace;color:var(--accent2);}
+.amt-out{font-family:'DM Mono',monospace;color:var(--danger);}
+.amt-dim{font-family:'DM Mono',monospace;color:var(--text2);}
+
+/* SUMMARY BOXES */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+@media(max-width:600px){.sum-grid{grid-template-columns:1fr;}}
+.sum-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.sum-box .lbl{font-size:11px;color:var(--text3);margin-bottom:5px;letter-spacing:.05em;}
+.sum-box .val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;}
+.val-a{color:var(--accent2);}
+.val-b{color:var(--accent);}
+.val-c{color:var(--accent3);}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500;}
+.badge-a{background:rgba(126,184,164,.15);color:var(--accent2);}
+.badge-b{background:rgba(200,169,110,.15);color:var(--accent);}
+.badge-c{background:rgba(168,123,191,.15);color:var(--accent3);}
+.badge-ok{background:rgba(126,184,164,.15);color:var(--accent2);}
+.badge-wait{background:rgba(200,169,110,.15);color:var(--accent);}
+.badge-pending{background:rgba(90,86,82,.3);color:var(--text2);}
+.badge-overdue{background:rgba(224,112,112,.15);color:var(--danger);}
+
+/* PILLS / TABS */
+.sub-tabs{display:flex;gap:4px;margin-bottom:14px;}
+.sub-tab{padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
+.sub-tab.active{background:var(--accent);color:#1a1410;border-color:var(--accent);}
+
+/* STAFF SELECT (checkbox list) */
+.staff-select-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.staff-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:12px;color:var(--text2);transition:all .15s;user-select:none;}
+.staff-chip.selected{border-color:var(--accent);color:var(--accent);background:rgba(200,169,110,.08);}
+.staff-chip input{display:none;}
+
+/* PERSON ALLOC ROW */
+.alloc-row{display:grid;grid-template-columns:100px 1fr 70px 90px 30px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.alloc-row:last-child{border-bottom:none;}
+
+/* RATIO BARS */
+.ratio-row{display:grid;grid-template-columns:90px 1fr 70px;align-items:center;gap:10px;margin-bottom:8px;}
+.ratio-bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.ratio-fill{height:100%;border-radius:3px;transition:width .3s;}
+.fill-a{background:var(--accent2);}
+.fill-b{background:var(--accent);}
+.fill-c{background:var(--accent3);}
+
+/* STAFF DASHBOARD */
+.staff-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:16px;}
+.staff-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:5px;}
+.staff-bar-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;}
+
+/* LEDGER TABLE — sticky col + sticky header */
+.ledger-scroll{overflow:auto;max-height:calc(100vh - 200px);border:1px solid var(--border);border-radius:var(--radius);}
+.ledger-tbl{border-collapse:separate;border-spacing:0;font-size:12px;width:max-content;min-width:100%;}
+.ledger-tbl thead th{position:sticky;top:0;z-index:10;background:var(--surface2);padding:6px 8px;font-size:11px;color:var(--text3);text-align:right;white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid var(--border);}
+.ledger-tbl thead th.col-label{text-align:left;min-width:160px;max-width:160px;position:sticky;left:0;z-index:20;background:var(--surface2);border-right:2px solid var(--border);}
+.ledger-tbl thead th.col-total{position:sticky;right:0;z-index:11;background:var(--surface2);border-left:2px solid var(--border);border-right:none;color:var(--accent2);}
+.ledger-tbl td.col-label{position:sticky;left:0;z-index:5;background:var(--surface);padding:5px 10px;color:var(--text2);white-space:nowrap;min-width:160px;max-width:160px;border-right:2px solid var(--border);border-bottom:1px solid var(--border);}
+.ledger-tbl tr.lg-section td{background:var(--surface2);color:var(--text2);font-weight:700;font-size:11px;letter-spacing:.06em;padding:5px 10px;border-bottom:1px solid var(--border);position:sticky;left:0;z-index:5;}
+.ledger-tbl td.lg-cell{padding:2px 3px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:76px;}
+.ledger-tbl td.lg-cell input{background:transparent;border:none;text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);padding:3px 5px;width:100%;}
+.ledger-tbl td.lg-cell input:focus{outline:1px solid var(--accent);border-radius:3px;background:rgba(200,169,110,.06);}
+.ledger-tbl td.col-total{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);text-align:right;padding:5px 10px;background:rgba(200,169,110,.04);border-left:2px solid var(--border);border-bottom:1px solid var(--border);min-width:88px;white-space:nowrap;position:sticky;right:0;z-index:5;}
+.ledger-tbl tr.lg-sum-row td.col-label{color:var(--accent);font-weight:700;font-size:13px;background:rgba(200,169,110,.06);}
+.ledger-tbl tr.lg-sum-row td.lg-cell{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);text-align:right;padding:6px 8px;background:rgba(200,169,110,.05);}
+.ledger-tbl tr.lg-sum-row td.col-total{font-size:13px;font-weight:700;}
+
+/* FORECAST TABLE */
+.fc-thead-month{
+  background:var(--surface2);padding:6px 8px;font-size:11px;color:var(--text3);
+  text-align:center;white-space:nowrap;border-bottom:2px solid var(--border);
+  border-right:1px solid var(--border);min-width:96px;position:sticky;top:0;z-index:10;
+}
+.fc-thead-label{
+  background:var(--surface2);padding:6px 10px;font-size:11px;color:var(--text3);
+  text-align:left;border-bottom:2px solid var(--border);border-right:2px solid var(--border);
+  min-width:140px;position:sticky;left:0;top:0;z-index:20;
+}
+.fc-label-cell{
+  position:sticky;left:0;z-index:5;background:var(--surface);
+  padding:5px 10px;font-size:12px;color:var(--text2);white-space:nowrap;
+  border-right:2px solid var(--border);border-bottom:1px solid var(--border);
+}
+.fc-data-cell{
+  padding:3px 4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  text-align:right;min-width:96px;position:relative;
+}
+.fc-cell-amt{
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--text);
+  cursor:pointer;padding:4px 6px;border-radius:3px;display:inline-block;width:100%;text-align:right;
+}
+.fc-cell-amt:hover{background:rgba(200,169,110,.1);}
+.fc-cell-input{
+  font-family:'DM Mono',monospace;font-size:12px;color:var(--text);
+  background:rgba(200,169,110,.12);border:1px solid var(--accent);
+  border-radius:3px;padding:3px 6px;width:100%;text-align:right;
+}
+.fc-cell-empty{color:var(--text3);font-size:11px;}
+.fc-in-row-label{display:flex;align-items:center;gap:4px;}
+.fc-move-btn{
+  font-size:10px;color:var(--text3);cursor:pointer;padding:1px 3px;
+  border-radius:2px;line-height:1;border:none;background:none;
+}
+.fc-move-btn:hover{color:var(--accent);background:rgba(200,169,110,.1);}
+.fc-del-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:1px 3px;border:none;background:none;}
+.fc-del-btn:hover{color:var(--danger);}
+.fc-section-row td{background:var(--surface2);font-size:11px;font-weight:700;
+  letter-spacing:.06em;color:var(--text2);padding:4px 10px;border-bottom:1px solid var(--border);}
+.fc-section-row td.fc-label-cell{position:sticky;left:0;z-index:5;}
+.fc-total-row td{background:rgba(200,169,110,.05);font-family:'DM Mono',monospace;
+  font-size:12px;font-weight:700;border-bottom:2px solid var(--border);}
+.fc-total-row td.fc-label-cell{color:var(--accent);}
+.fc-balance-row td{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;
+  border-bottom:2px solid var(--border);}
+.fc-balance-row td.fc-label-cell{color:var(--text);}
+.fc-negative{color:var(--danger)!important;}
+.fc-positive{color:var(--accent2)!important;}
+.fc-warning-col{background:rgba(224,112,112,.06)!important;}
+.fc-summary-chip{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:8px 14px;min-width:80px;text-align:center;flex-shrink:0;
+}
+.fc-summary-chip .fc-sc-month{font-size:10px;color:var(--text3);margin-bottom:3px;}
+.fc-summary-chip .fc-sc-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;}
+
+/* FORECAST */
+.fc-out-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);}
+.fc-out-row:last-child{border-bottom:none;}
+.fc-out-row .fc-lbl{flex:1;font-size:13px;color:var(--text2);}
+.fc-out-row input{width:110px;text-align:right;font-family:'DM Mono',monospace;}
+
+/* draggable income rows */
+.fc-in-row{display:flex;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px solid var(--border);border-radius:4px;cursor:grab;transition:background .15s;}
+.fc-in-row:last-child{border-bottom:none;}
+.fc-in-row:active{cursor:grabbing;}
+.fc-in-row.drag-over{background:rgba(200,169,110,.12);border-color:var(--accent);}
+.fc-in-row.dragging{opacity:.4;}
+.fc-drag-handle{color:var(--text3);font-size:14px;cursor:grab;padding:0 4px;user-select:none;}
+.fc-in-row .fc-desc{flex:1;font-size:12px;}
+.fc-in-row .fc-amt{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2);min-width:90px;text-align:right;}
+.fc-in-row input.fc-desc-input{flex:1;font-size:12px;background:transparent;border:none;color:var(--text);padding:2px 4px;}
+.fc-in-row input.fc-desc-input:focus{outline:1px solid var(--accent);border-radius:3px;background:var(--surface2);}
+.fc-in-row input.fc-amt-input{width:90px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;background:transparent;border:none;color:var(--accent2);padding:2px 4px;}
+.fc-in-row input.fc-amt-input:focus{outline:1px solid var(--accent);border-radius:3px;background:var(--surface2);}
+
+/* UTILS */
+.flex{display:flex;}.flex-between{display:flex;justify-content:space-between;align-items:center;}
+.flex-end{display:flex;justify-content:flex-end;gap:8px;}
+.gap-8{gap:8px;}.mt-12{margin-top:12px;}.mt-8{margin-top:8px;}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.tag{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--text2);}
+.input-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+.input-row .form-group{flex:1;min-width:120px;}
+.text-right{text-align:right;}
+.text-center{text-align:center;}
+.col-span-all{grid-column:1/-1;}
+
+/* TOAST */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#1a1410;padding:9px 16px;border-radius:6px;font-size:13px;font-weight:500;opacity:0;transform:translateY(6px);transition:all .2s;z-index:999;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:500;margin-bottom:16px;}
+
+@media(max-width:700px){
+  .alloc-row{grid-template-columns:80px 1fr 60px 80px 24px;}
+  .sum-grid{grid-template-columns:1fr 1fr;}
+  .nav-tab{padding:5px 8px;font-size:11px;}
+}
+</style>
+</head>
+<body data-ver="1776304492">
+
+<header>
+  <div class="logo">探索廣告 <span>· 管理版</span></div>
+  <div class="nav-wrap">
+    <button class="nav-tab active" onclick="showPage('pg-bonus')">獎金試算</button>
+    <button class="nav-tab" onclick="showPage('pg-list')">個案列表</button>
+    <button class="nav-tab" onclick="showPage('pg-contract')">請款追蹤</button>
+    <button class="nav-tab" onclick="showPage('pg-passbook')">存摺帳</button>
+    <button class="nav-tab" onclick="showPage('pg-ledger')">日記帳</button>
+    <button class="nav-tab" onclick="showPage('pg-forecast')">預抓表</button>
+    <button class="nav-tab" onclick="showPage('pg-staff')">人員總覽</button>
+    <button class="nav-tab" onclick="showPage('pg-report')">年度報表</button>
+    <button class="nav-tab" onclick="showPage('pg-settings')">設定</button>
+  </div>
+  <div id="sync-indicator" style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;white-space:nowrap;padding-right:8px"><div id="sync-dot" style="width:6px;height:6px;border-radius:50%;background:var(--text3);transition:background .3s"></div><span id="sync-text">連線中...</span></div>
+</header>
+
+<div class="container">
+
+<!-- ══ PAGE: 獎金試算 ══ -->
+<div id="pg-bonus" class="page active">
+  <div class="sec-header">
+    <div class="sec-title">個案獎金試算</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="sub-tabs" style="margin-bottom:0">
+        <button class="sub-tab active" id="tab-legacy-bonus" onclick="switchBonusMode('legacy')">舊制（手動分配）</button>
+        <button class="sub-tab" id="tab-new-bonus" onclick="switchBonusMode('new')">新制（阿米巴）</button>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="clearBonus()">清除</button>
+    </div>
+  </div>
+  <!-- 舊制入口 -->
+  <div id="legacy-bonus-panel" style="display:block">
+    <div class="card">
+      <div class="card-title">舊制個案管理</div>
+      <!-- 從請款追蹤選案 -->
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px">從請款追蹤選取案子：</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="lb-contract-select" style="flex:1;font-size:13px" onchange="lbFillFromContract()">
+            <option value="">— 選擇案子 —</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="refreshContractSelect()">重新整理</button>
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">或手動建立新案子：</div>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-group"><label>客戶名稱</label><input id="lb-client" type="text" placeholder="如：順天昌明段"></div>
+        <div class="form-group"><label>合約期間</label><input id="lb-contract-period" type="text" placeholder="如：114.01-115.12"></div>
+        <div class="form-group"><label>合約總額</label><input id="lb-contract-total" type="number" placeholder="0"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="initLegacyCase()">建立案子 / 新增期次</button>
+    </div>
+    <div id="legacy-cases-wrap"></div>
+  </div>
+
+  <!-- 新制入口 -->
+  <div id="new-bonus-panel" style="display:none">
+    <div class="card">
+      <div class="card-title">新制（阿米巴）個案管理</div>
+      <!-- 從請款追蹤選案 -->
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px">從請款追蹤選取案子：</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="nb-contract-select" style="flex:1;font-size:13px" onchange="nbFillFromContract()">
+            <option value="">— 選擇案子 —</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="refreshContractSelect()">重新整理</button>
+        </div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">或手動建立新案子：</div>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="form-group"><label>客戶名稱</label><input id="b-client" type="text" placeholder="如：中悅仰悦"></div>
+        <div class="form-group"><label>合約期間</label><input id="b-contract-period" type="text" placeholder="如：115.01-116.12"></div>
+        <div class="form-group"><label>合約總額</label><input id="b-contract-total" type="number" placeholder="0"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="initNewCase()">建立案子 / 新增期次</button>
+    </div>
+    <div id="new-cases-wrap"></div>
+  </div>
+  <!-- 保留舊版 recalc 需要的隱藏欄位，避免 JS 錯誤 -->
+  <div style="display:none">
+    <input id="b-gross"><input id="b-ra" value="35"><input id="b-rc" value="20">
+    <input id="b-sim-pct" value="50"><input id="b-julia-pct" value="50">
+    <input id="b-ivy" value="0"><input id="b-date"><input id="b-period">
+    <span id="b-pct"></span><span id="bar-a"></span><span id="bar-b"></span><span id="bar-c"></span>
+    <span id="amt-a"></span><span id="amt-b"></span><span id="amt-c"></span>
+    <span id="amt-sim"></span><span id="amt-julia"></span>
+    <span id="rs-a"></span><span id="rs-b"></span><span id="rs-c"></span>
+    <span id="b-alloc-pct"></span><span id="b-remain"></span>
+    <div id="staff-chips"></div><div id="ext-rows"></div>
+    <div id="alloc-rows"></div><tbody id="rs-tbody"></tbody>
+  </div>
+</div>
+
+<!-- ══ PAGE: 個案列表 ══ -->
+<div id="pg-list" class="page">
+  <div class="sec-header">
+    <div class="sec-title">個案列表</div>
+    <span style="font-size:12px;color:var(--text2)">共 <span id="proj-count">0</span> 筆</span>
+  </div>
+  <div id="proj-list-wrap"><div class="empty">尚無個案資料</div></div>
+  <div id="proj-detail" style="display:none;margin-top:16px">
+    <div class="card" style="border-color:var(--accent)">
+      <div class="flex-between" style="margin-bottom:14px">
+        <div><div style="font-size:17px;font-weight:500" id="det-title">—</div><div style="font-size:12px;color:var(--text2);margin-top:3px" id="det-meta">—</div></div>
+        <button class="btn btn-danger btn-sm" onclick="deleteProj()">刪除</button>
+      </div>
+      <div class="sum-grid">
+        <div class="sum-box"><div class="lbl">A帳</div><div class="val val-a" id="det-a">$0</div></div>
+        <div class="sum-box"><div class="lbl">B帳</div><div class="val val-b" id="det-b">$0</div></div>
+        <div class="sum-box"><div class="lbl">C帳</div><div class="val val-c" id="det-c">$0</div></div>
+      </div>
+      <table class="tbl"><thead><tr><th>人員</th><th>角色</th><th>帳別</th><th>比例</th><th class="text-right">金額</th></tr></thead><tbody id="det-tbody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: 請款追蹤 ══ -->
+<div id="pg-contract" class="page">
+  <div class="sec-header">
+    <div class="sec-title">請款追蹤</div>
+    <button class="btn btn-primary btn-sm" onclick="openContractModal()">＋ 新增案子</button>
+  </div>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchContractTab('探索')">探索</button>
+    <button class="sub-tab" onclick="switchContractTab('時代')">時代</button>
+    <button class="sub-tab" onclick="switchContractTab('碩人')">碩人</button>
+    <button class="sub-tab" onclick="switchContractTab('尚未進款')">尚未進款</button>
+  </div>
+  <div id="contract-wrap"></div>
+</div>
+
+<!-- ══ PAGE: 存摺帳 ══ -->
+<div id="pg-passbook" class="page">
+  <div class="sec-header">
+    <div class="sec-title">存摺帳</div>
+    <button class="btn btn-primary btn-sm" onclick="openPbModal()">＋ 新增記錄</button>
+  </div>
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="switchPbTab('探索')">探索</button>
+    <button class="sub-tab" onclick="switchPbTab('時代')">時代</button>
+    <button class="sub-tab" onclick="switchPbTab('碩人')">碩人</button>
+    <button class="sub-tab" onclick="switchPbTab('備用')">備用</button>
+    <button class="sub-tab" onclick="switchPbTab('合計')">合計</button>
+  </div>
+  <!-- 餘額 -->
+  <div class="card" style="margin-bottom:10px">
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
+      <div><span style="font-size:11px;color:var(--text2)">本頁餘額</span><div class="mono" style="font-size:20px;color:var(--accent)" id="pb-balance">$0</div></div>
+      <div><span style="font-size:11px;color:var(--text2)">本月收入</span><div class="mono" style="font-size:18px;color:var(--accent2)" id="pb-in-month">$0</div></div>
+      <div><span style="font-size:11px;color:var(--text2)">本月支出</span><div class="mono" style="font-size:18px;color:var(--danger)" id="pb-out-month">$0</div></div>
+    </div>
+  </div>
+  <div id="pb-wrap"></div>
+</div>
+
+<!-- ══ PAGE: 日記帳 ══ -->
+<div id="pg-ledger" class="page">
+  <div class="sec-header">
+    <div class="sec-title">日記帳</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select id="ledger-year" onchange="renderLedger()" style="width:90px">
+        <option>2025</option><option>2026</option><option>2027</option>
+      </select>
+      <div class="sub-tabs" style="margin-bottom:0">
+        <button class="sub-tab active" onclick="switchLedgerTab('探索')">探索</button>
+        <button class="sub-tab" onclick="switchLedgerTab('時代')">時代</button>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="exportLedger()">匯出年度表</button>
+    </div>
+  </div>
+  <div id="ledger-wrap"></div>
+</div>
+
+<!-- ══ PAGE: 預抓表 ══ -->
+<div id="pg-forecast" class="page">
+  <div class="sec-header">
+    <div class="sec-title">年度預抓表</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="fc-year" style="width:80px" onchange="renderForecast()">
+        <option>2025</option><option selected>2026</option><option>2027</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="saveForecast()">儲存</button>
+      <button class="btn btn-secondary btn-sm" onclick="openFcInModal()">＋ 新增收款案子</button>
+      <button class="btn btn-secondary btn-sm" onclick="openFcOutModal()">＋ 新增支出項目</button>
+    </div>
+  </div>
+
+  <!-- 年度總覽列 -->
+  <div id="fc-summary-bar" style="display:flex;gap:12px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px"></div>
+
+  <!-- 主表：橫向12個月 -->
+  <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)">
+    <table id="fc-main-table" style="border-collapse:separate;border-spacing:0;min-width:1400px;width:100%">
+      <thead id="fc-thead"></thead>
+      <tbody id="fc-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- 說明 -->
+  <div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.8">
+    收款項目：點金額可編輯 ／ ← → 左右移動一個月 ／ 🗑 刪除此筆 ／ 拖曳列標題可調整順序<br>
+    支出項目：點金額可直接編輯 ／ 深色底色為餘額不足月份
+  </div>
+</div>
+
+<!-- ══ MODAL: 新增收款案子 ══ -->
+<div class="modal-bg" id="modal-fc-in">
+  <div class="modal">
+    <div class="modal-title">新增收款案子</div>
+    <div class="form-grid">
+      <div class="form-group col-span-all"><label>案名</label><input id="fci-name" type="text" placeholder="如：中悅仰悦(一)"></div>
+      <div class="form-group"><label>預計入帳月份</label>
+        <select id="fci-month">
+          <option value="1">01月</option><option value="2">02月</option><option value="3">03月</option>
+          <option value="4">04月</option><option value="5">05月</option><option value="6">06月</option>
+          <option value="7">07月</option><option value="8">08月</option><option value="9">09月</option>
+          <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+        </select>
+      </div>
+      <div class="form-group"><label>金額</label><input id="fci-amt" type="number" placeholder="0"></div>
+      <div class="form-group col-span-all"><label>備註</label><input id="fci-note" type="text" placeholder="（選填）"></div>
+    </div>
+    <div style="margin-top:12px">
+      <label style="font-size:11px;color:var(--text2)">同案後續期款（自動依月份順延）：</label>
+      <div id="fci-phases-wrap" style="margin-top:6px"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addFciPhase()" style="margin-top:6px">＋ 新增下一期</button>
+    </div>
+    <div class="flex-end mt-12">
+      <button class="btn btn-secondary" onclick="closeModal('modal-fc-in')">取消</button>
+      <button class="btn btn-primary" onclick="saveFcIn()">新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 新增支出項目 ══ -->
+<div class="modal-bg" id="modal-fc-out">
+  <div class="modal">
+    <div class="modal-title">新增支出項目</div>
+    <div class="form-grid">
+      <div class="form-group"><label>項目名稱</label><input id="fco-name" type="text" placeholder="如：旅遊預存"></div>
+      <div class="form-group"><label>類型</label>
+        <select id="fco-type">
+          <option value="fixed">每月固定</option>
+          <option value="once">單次（指定月份）</option>
+        </select>
+      </div>
+      <div class="form-group"><label>月份（單次用）</label>
+        <select id="fco-month">
+          <option value="0">每月</option>
+          <option value="1">01月</option><option value="2">02月</option><option value="3">03月</option>
+          <option value="4">04月</option><option value="5">05月</option><option value="6">06月</option>
+          <option value="7">07月</option><option value="8">08月</option><option value="9">09月</option>
+          <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+        </select>
+      </div>
+      <div class="form-group"><label>金額</label><input id="fco-amt" type="number" placeholder="0"></div>
+    </div>
+    <div class="flex-end mt-12">
+      <button class="btn btn-secondary" onclick="closeModal('modal-fc-out')">取消</button>
+      <button class="btn btn-primary" onclick="saveFcOut()">新增</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ PAGE: 年度報表 ══ -->
+<div id="pg-report" class="page">
+  <div class="sec-header">
+    <div class="sec-title">年度報表</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select id="report-year" style="width:90px">
+        <option>2024</option><option>2025</option><option selected>2026</option><option>2027</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="exportAnnualReport()">匯出 Excel</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">報表內容</div>
+    <div style="font-size:13px;color:var(--text2);line-height:2">
+      匯出後包含以下工作表：<br>
+      ① 管銷明細-探索（固定費+浮動費，按月）<br>
+      ② 員工薪資獎金（每人每月薪資＋獎金）<br>
+      ③ 總監獎金明細（Sim / Julia / How）<br>
+      ④ 外配獎金明細（各外配人員）<br>
+      ⑤ 個案入帳總表（按客戶統計）<br>
+      ⑥ 存摺帳年度收支（四帳戶）
+    </div>
+  </div>
+  <div class="card" id="report-preview-wrap">
+    <div class="card-title">本年度摘要</div>
+    <div id="report-preview" style="color:var(--text2);font-size:13px">選擇年度後點「匯出 Excel」</div>
+  </div>
+</div>
+
+<!-- ══ PAGE: 人員總覽 ══ -->
+<div id="pg-staff" class="page">
+  <div class="sec-header"><div class="sec-title">人員獎金總覽</div></div>
+  <div id="staff-overview"></div>
+</div>
+
+<!-- ══ PAGE: 設定 ══ -->
+<div id="pg-settings" class="page">
+  <div class="sec-header"><div class="sec-title">系統設定</div></div>
+
+  <!-- 人員名單 -->
+  <div class="card">
+    <div class="card-title">執行人員名單</div>
+    <div id="staff-list-set"></div>
+    <div class="divider"></div>
+    <div class="input-row mt-8">
+      <div class="form-group"><label>姓名</label><input id="ns-name" type="text" placeholder="姓名"></div>
+      <div class="form-group"><label>預設角色</label>
+        <select id="ns-role">
+          <option>執行總監</option><option>PM/AE</option><option>主責設計</option>
+          <option>文案企劃</option><option>助理設計</option><option>外部人員</option><option>其他</option>
+        </select>
+      </div>
+      <div class="form-group"><label>月薪</label><input id="ns-salary" type="number" placeholder="0"></div>
+      <div><button class="btn btn-primary" onclick="addStaff()" style="margin-top:18px">新增</button></div>
+    </div>
+  </div>
+
+  <!-- 預設比例 -->
+  <div class="card">
+    <div class="card-title">預設分配比例</div>
+    <div class="form-grid">
+      <div class="form-group"><label>預設 A帳 %</label><input id="def-a" type="number" value="35"></div>
+      <div class="form-group"><label>預設 C帳 %</label><input id="def-c" type="number" value="20"></div>
+    </div>
+    <div class="flex-end mt-12"><button class="btn btn-primary" onclick="saveSettings()">儲存設定</button></div>
+  </div>
+
+  <!-- 資料管理 -->
+  <div class="card">
+    <div class="card-title">資料管理</div>
+    <div class="flex gap-8">
+      <button class="btn btn-secondary" onclick="exportData()">匯出 JSON</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('imp-file').click()">匯入 JSON</button>
+      <button class="btn btn-secondary" onclick="manualBackup()">立即備份到 Sheets</button>
+      <button class="btn btn-danger" onclick="clearAll()">清除所有資料</button>
+    </div>
+    <input type="file" id="imp-file" accept=".json" style="display:none" onchange="importData(event)">
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ══ MODAL: 舊制獎金 ══ -->
+<div class="modal-bg" id="modal-legacy-bonus">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-title">舊制獎金 — <span id="lb-case-title">案名</span></div>
+
+    <!-- 從請款追蹤帶入期款 -->
+    <div id="lb-phase-select-wrap" style="margin-bottom:12px;padding:10px 12px;background:var(--surface2);border-radius:6px;display:none">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:6px">從請款追蹤帶入期款（選後自動填入金額）：</div>
+      <select id="lb-phase-select" style="width:100%;font-size:13px" onchange="lbFillFromPhase()">
+        <option value="">— 選擇期款 —</option>
+      </select>
+    </div>
+
+    <!-- 基本資料 -->
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-group"><label>期次名稱</label><input id="lb-period" type="text" placeholder="如：no.1-3"></div>
+      <div class="form-group"><label>請款金額（未稅）</label><input id="lb-gross" type="number" placeholder="0" oninput="lbCalc()"></div>
+      <div class="form-group"><label>含稅入帳金額</label><input id="lb-gross-tax" type="number" placeholder="自動＋5%" oninput="lbCalc()"></div>
+    </div>
+
+    <!-- A帳 -->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent2);margin-bottom:8px">A 帳 — 入公司</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px">
+        <div class="form-group">
+          <label>公司比例 %</label>
+          <input id="lb-co-pct" type="number" value="50" oninput="lbCalc()">
+        </div>
+        <div class="form-group">
+          <label>A帳入帳（自動）</label>
+          <div id="lb-a-amt" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2)">$0</div>
+        </div>
+        <div class="form-group">
+          <label>實際留公司（A－C）</label>
+          <div id="lb-a-net" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2)">$0</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">同事獎金（C帳）從A帳提撥，不影響B帳總監分配</div>
+    </div>
+
+    <!-- B帳：總監 -->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent)">B 帳 — 總監</div>
+        <div style="font-size:12px;color:var(--text2)">已分配：<span id="lb-b-alloc" style="font-family:'DM Mono',monospace;color:var(--accent)">$0</span>　執行總額：<span id="lb-exec-amt" style="font-family:'DM Mono',monospace">$0</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 90px 60px 100px 28px;gap:6px;margin-bottom:4px;font-size:11px;color:var(--text3)">
+        <span>角色</span><span>姓名</span><span style="text-align:right">%</span><span style="text-align:right">金額（自動）</span><span></span>
+      </div>
+      <div id="lb-b-rows"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addLbBRow()">＋ 新增總監人員</button>
+    </div>
+
+    <!-- C帳：同事獎金（從A帳提撥）-->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent3)">C 帳 — 同事獎金（從A帳提撥）</div>
+        <div style="font-size:12px;color:var(--text2)">已分配：<span id="lb-c-alloc" style="font-family:'DM Mono',monospace;color:var(--accent3)">$0</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 90px 60px 100px 28px;gap:6px;margin-bottom:4px;font-size:11px;color:var(--text3)">
+        <span>角色</span><span>姓名</span><span style="text-align:right">%</span><span style="text-align:right">金額（自動）</span><span></span>
+      </div>
+      <div id="lb-c-rows"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addLbCRow()">＋ 新增同事</button>
+    </div>
+
+    <!-- 總覽 -->
+    <div style="background:var(--surface2);border-radius:6px;padding:12px;margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">A 帳入帳</div>
+          <div id="lb-sum-a" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent2)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">A 帳實留（－C）</div>
+          <div id="lb-sum-a-net" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent2)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">B 帳（總監）</div>
+          <div id="lb-sum-b" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">C 帳（同事）</div>
+          <div id="lb-sum-c" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent3)">$0</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid var(--border);padding-top:8px">
+        <span style="color:var(--text2)">請款：<span id="lb-sum-gross" style="font-family:'DM Mono',monospace;color:var(--text)">$0</span></span>
+        <span style="color:var(--text2)">B帳剩餘（執行－總監）：<span id="lb-sum-diff" style="font-family:'DM Mono',monospace">$0</span></span>
+        <span style="color:var(--text2)">A帳剩餘（A－C）：<span id="lb-sum-a-remain" style="font-family:'DM Mono',monospace">$0</span></span>
+      </div>
+    </div>
+
+    <div class="flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-legacy-bonus')">取消</button>
+      <button class="btn btn-primary" id="lb-save-btn" onclick="saveLbPhase()">儲存</button>
+    </div>
+  </div>
+</div>
+<!-- ══ MODAL: 新制獎金 ══ -->
+<div class="modal-bg" id="modal-new-bonus">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-title">新制（阿米巴）— <span id="nb-case-title">案名</span></div>
+
+    <!-- 從請款選期款 -->
+    <div style="margin-bottom:12px;padding:10px 12px;background:var(--surface2);border-radius:6px" id="nb-phase-select-wrap">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:6px">從請款追蹤帶入期款：</div>
+      <select id="nb-phase-select" style="width:100%;font-size:13px" onchange="nbFillFromPhase()">
+        <option value="">— 選擇期款 —</option>
+      </select>
+    </div>
+    <!-- 基本 -->
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-group"><label>期次名稱</label><input id="nb-period" type="text" placeholder="如：no.1-3"></div>
+      <div class="form-group"><label>請款金額（未稅）</label><input id="nb-gross" type="number" placeholder="0" oninput="nbCalc()"></div>
+      <div class="form-group"><label>外部硬成本 %</label><input id="nb-hard-pct" type="number" value="20" placeholder="20" oninput="nbCalc()"></div>
+    </div>
+
+    <!-- A帳 -->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent2);margin-bottom:8px">A 帳 — 公司管銷</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div class="form-group">
+          <label>A帳 %</label>
+          <input id="nb-a-pct" type="number" value="30" oninput="nbCalc()">
+        </div>
+        <div class="form-group">
+          <label>淨收入（扣硬成本）</label>
+          <div id="nb-net-amt" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;color:var(--text)">$0</div>
+        </div>
+        <div class="form-group">
+          <label>A帳金額（自動）</label>
+          <div id="nb-a-amt" style="padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2)">$0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B帳：同事（移到C帳上方）-->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent)">B 帳 — 同事（阿米巴分潤）</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:8px">佔淨收入 <span id="nb-b-pct-display" style="color:var(--accent);font-family:'DM Mono',monospace">0%</span>　合計 <span id="nb-b-total" style="color:var(--accent);font-family:'DM Mono',monospace">$0</span></span>
+        </div>
+        <div style="font-size:12px;color:var(--text2)">已分配：<span id="nb-b-alloc" style="font-family:'DM Mono',monospace;color:var(--accent)">$0</span>　剩餘：<span id="nb-b-remain2" style="font-family:'DM Mono',monospace">$0</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 90px 60px 100px 28px;gap:6px;margin-bottom:4px;font-size:11px;color:var(--text3)">
+        <span>角色</span><span>姓名</span><span style="text-align:right">% (淨收入)</span><span style="text-align:right">金額</span><span></span>
+      </div>
+      <div id="nb-b-rows"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addNbBRow()">＋ 新增同事</button>
+    </div>
+
+    <!-- C帳：創辦人 -->
+    <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--accent3)">C 帳 — 創辦人</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:8px">佔淨收入 <span id="nb-c-pct-display" style="color:var(--accent3);font-family:'DM Mono',monospace">0%</span>　合計 <span id="nb-c-total" style="color:var(--accent3);font-family:'DM Mono',monospace">$0</span></span>
+        </div>
+        <div style="font-size:12px;color:var(--text2)">已分配：<span id="nb-c-alloc" style="font-family:'DM Mono',monospace;color:var(--accent3)">$0</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 90px 60px 100px 28px;gap:6px;margin-bottom:4px;font-size:11px;color:var(--text3)">
+        <span>角色</span><span>姓名</span><span style="text-align:right">% (淨收入)</span><span style="text-align:right">金額</span><span></span>
+      </div>
+      <div id="nb-c-rows"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addNbCRow()">＋ 新增創辦人</button>
+    </div>
+
+    <!-- 總覽 -->
+    <div style="background:var(--surface2);border-radius:6px;padding:12px;margin-bottom:12px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">A 帳（公司）</div>
+          <div id="nb-sum-a-pct" style="font-size:11px;color:var(--text3)">0%</div>
+          <div id="nb-sum-a" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent2)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">B 帳（同事）</div>
+          <div id="nb-sum-b-pct" style="font-size:11px;color:var(--text3)">0%</div>
+          <div id="nb-sum-b" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">C 帳（創辦人）</div>
+          <div id="nb-sum-c-pct" style="font-size:11px;color:var(--text3)">0%</div>
+          <div id="nb-sum-c" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent3)">$0</div>
+        </div>
+        <div style="text-align:center;border-left:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">B帳剩餘</div>
+          <div style="font-size:11px;color:var(--text3)">未分配</div>
+          <div id="nb-sum-remain" style="font-family:'DM Mono',monospace;font-size:15px;color:var(--text)">$0</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid var(--border);padding-top:8px">
+        <span style="color:var(--text2)">請款：<span id="nb-sum-gross" style="font-family:'DM Mono',monospace;color:var(--text)">$0</span></span>
+        <span style="color:var(--text2)">淨收入：<span id="nb-sum-net" style="font-family:'DM Mono',monospace;color:var(--text)">$0</span></span>
+        <span style="color:var(--text2)">硬成本：<span id="nb-sum-hard" style="font-family:'DM Mono',monospace;color:var(--danger)">$0</span></span>
+      </div>
+    </div>
+
+    <div class="flex-end">
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-bonus')">取消</button>
+      <button class="btn btn-primary" id="nb-save-btn" onclick="saveNbPhase()">新增此期次</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 日記帳子項目 ══ -->
+<div class="modal-bg" id="modal-ledger-sub">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">子項目明細 — <span id="lsub-title"></span></div>
+    <div id="lsub-rows"></div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addLsubRow()">＋ 新增子項目</button>
+    <div class="flex-end" style="margin-top:12px">
+      <button class="btn btn-secondary" onclick="closeModal('modal-ledger-sub')">關閉</button>
+      <button class="btn btn-primary" onclick="saveLsub()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 新增請款案子 ══ -->
+<div class="modal-bg" id="modal-contract">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-title" id="mc-modal-title">新增請款案子</div>
+    <div class="form-grid">
+      <div class="form-group"><label>公司</label>
+        <select id="mc-co"><option>探索</option><option>時代</option><option>碩人</option></select>
+      </div>
+      <div class="form-group"><label>建設公司</label><input id="mc-builder" type="text" placeholder="如：新創開"></div>
+      <div class="form-group"><label>案名</label><input id="mc-name" type="text" placeholder="如：和宜上美"></div>
+      <div class="form-group"><label>合約期間</label><input id="mc-period" type="text" placeholder="如：114.03-115.02"></div>
+      <div class="form-group"><label>合約總額（元）</label><input id="mc-total" type="number" placeholder="0"></div>
+      <div class="form-group"><label>含稅</label>
+        <select id="mc-tax"><option value="1">含稅</option><option value="0">不含稅</option></select>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">請款期次：</div>
+      <div id="mc-phases"></div>
+      <button class="btn btn-secondary btn-sm mt-8" onclick="addPhase()">＋ 新增期次</button>
+    </div>
+    <div class="flex-end mt-12">
+      <button class="btn btn-secondary" onclick="closeModal('modal-contract')">取消</button>
+      <button class="btn btn-primary" onclick="saveContract()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: 新增存摺記錄 ══ -->
+<div class="modal-bg" id="modal-pb">
+  <div class="modal">
+    <div class="modal-title">新增存摺記錄</div>
+    <div class="form-grid">
+      <div class="form-group"><label>帳戶</label>
+        <select id="pb-co"><option>探索</option><option>時代</option><option>碩人</option><option>備用</option></select>
+      </div>
+      <div class="form-group"><label>日期</label><input id="pb-date" type="date"></div>
+      <div class="form-group"><label>摘要</label><input id="pb-summary" type="text" placeholder="如：勞保費"></div>
+      <div class="form-group"><label>票據號碼</label><input id="pb-ticket" type="text" placeholder="（選填）"></div>
+      <div class="form-group"><label>對象</label><input id="pb-target" type="text" placeholder="（選填）"></div>
+      <div class="form-group col-span-all"><label>細項說明</label><input id="pb-detail" type="text" placeholder="如：探索114年11月勞保費"></div>
+      <div class="form-group"><label>支出金額</label><input id="pb-out" type="number" placeholder="0"></div>
+      <div class="form-group"><label>存入金額</label><input id="pb-in" type="number" placeholder="0"></div>
+      <div class="form-group"><label>類型</label>
+        <select id="pb-type">
+          <option>一般</option><option>薪資</option><option>獎金</option><option>稅款</option>
+          <option>保費</option><option>房租</option><option>請款收入</option><option>帳戶轉帳</option><option>其他</option>
+        </select>
+      </div>
+      <div class="form-group"><label>備註</label><input id="pb-note" type="text" placeholder="（選填）"></div>
+    </div>
+    <div class="flex-end mt-12">
+      <button class="btn btn-secondary" onclick="closeModal('modal-pb')">取消</button>
+      <button class="btn btn-primary" onclick="savePb()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">已儲存</div>
+
+<script>
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let S = {
+  projects: [],
+  staff: [],
+  settings: { defA: 35, defC: 20 },
+  contracts: [],   // { id, co, builder, name, period, total, tax, phases:[{no,amt,planDate,invoiceDate,receiveDate,status}] }
+  passbook: [],    // { id, co, date, summary, ticket, target, detail, out, in, type, note }
+  ledger: {},      // { '2025-探索': { '人事管銷費': [jan..dec] } }
+  forecast: {},    // { '2026-3': { fixedOut:[{label,amt}], inRows:[{desc,amt}], openBal } }
+};
+
+let pbTab='探索', contractTab='探索', ledgerTab='探索', selectedProjId=null;
+
+
+// ══════════════════════════════════════
+// GOOGLE SHEETS CONFIG
+// ══════════════════════════════════════
+const SHEET_ID = '1uwmVpjTqd5LbMbbv9-H4mheiHOLqjHcvK-VvpqNMFhI';
+const SA_EMAIL = 'id-app@discovery-manage.iam.gserviceaccount.com';
+const SA_KEY = `-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDrz4oYQ3/Cj8fS\nLpjRB/9tfB33jRi8hHU8A/IqFiFrNfrzghnplbVJ/TEXFEJ3BTP9kZNTHNldiYRl\n8qgNORoCrA9gQSH6rH+0A3alSKsFkNgh/fXV8uiENDSjLcaPfgvxYJk5OR1BGj69\nc7pU5j0u/kFwcvfnb8Eu4zdrneG0XYl0uSNdf6zYtzUrY2tFPfAz2AhO/6CyvxtQ\niwd/bKSqTAg5YnX5KcOJ2dTYFE3MToby1Vf0hnnJg/sgGQcoZn9NC9E8TtvOYKlf\nhUESMucRnXWgY/duQqPfM3K2mehuqZMIDc6xoO7mM6c7STekUCiuKgbkctJ+6ZpP\nXGN86JqVAgMBAAECggEALlfQiDG1yVcn+mTZeBU2C/6NRiIm5x+yCYwt+rr0MOWA\nLvyV2pvnL8YQcHx1Dn6Jh+8k8LvV9SXKTR3aDJU5CSbm87ABPUpK46YdmmCUacjc\nTRvjxTsSmq7G3H3pzLgFIVgubLpOh0Wg6Gs2xqokApkJ489YbJXANdaGRQJXgfJS\ndYyvmIp3taSn1BuOqOVgJ5fzAhLUqvye2OT44Fgwwr5ffmW0WOL+29Y1YeVG2Wua\nmpXj+L8VaeDjlt5fA5PQ0ws5EAAypzwyKr7qG34JGY/+JxC85CWAJUqvAq8uzSMT\nIdUE1EdqAVAu22OjTt77u+yG6RnQyS4fBTThYmUIgQKBgQD4hFQMTcxymgjR3dsh\n5vRKjYzIjX6DF6ukhS9g+hewBJ0AMeNw+Gbon8PmOoT1mcGYKp5vXhgQeYHPzFZZ\n/bnGo3nSoNPrTcxlYzc2LsVE+HrKRZfOMX6n/4l/Idte7p1JVzze83rTqRt95ar0\n/xoCsTYAI+gMkQDEyJtJnU1xgQKBgQDy6UQydglGwTNhPtOHB7JMjOKan8//1HZ0\noe4DXbPSjlEOn2+AV7o6ndHK0QGXwexVNxBfXCDhmAiepMBq+FyQDuSfZB/6ZZ7B\n1Sg54KNFrA2fBnwpD48zr2NYaRPWAIzDE4Xs9Ys5x2EIthUQ8JsfRtpCndf/0FNg\nUzZg6Q3LFQKBgHWnmG72yisbd7977EnBoLhHCXbNXi7MHwvVrheYb2x60qWL+OS8\nBWRudv1hiR8JexkCXF3XS0dJb0aks+EI+VHshTlNwOauv2zkqvfw7p33kZJ/nh4V\nWqRIm5zft47bIwXc0kmvNeBNOGHDQMualoLdyPYKCcshPx7q5nHUkhyBAoGBANTq\nKeChHZhrGAIQ84/T6zC1/JnTopl3PS0WEm3Y4BmarOnITg+M1aszUgQYFvFSBTjc\nPvmW4ytZ+5QyjIY2k8uhgjtDo9Py5qi3kb7Ja9NR786H/KRxAvAmt0lzMPPPH5KN\ntkHxJ8vJOwBLuUNT4mQT0pO5ju6nR62SwoNHQ9PRAoGADw3PnswcPfBpu9kyGXfK\nspi4oB1ydaReMokWZPy3aa1WYX6XBDPggeOV2opQINJJjEkCf9MfN9IFPsmSbOx3\nLO8Trgp+A9IXJREIBWQkDADKwQjM+D/42mZHk5N+Bgua7p8trnpsorEiUVZQTmIt\ncpzov214a3mxre/0OS79h5A=\n-----END PRIVATE KEY-----\n`;
+
+let _token = null;
+let _tokenExp = 0;
+
+async function getToken() {
+  if (_token && Date.now() < _tokenExp) return _token;
+  const now = Math.floor(Date.now()/1000);
+  const header = btoa(JSON.stringify({alg:'RS256',typ:'JWT'})).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  const claim = btoa(JSON.stringify({
+    iss:SA_EMAIL, scope:'https://www.googleapis.com/auth/spreadsheets',
+    aud:'https://oauth2.googleapis.com/token', exp:now+3600, iat:now
+  })).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  const msg = header+'.'+claim;
+  const keyStr = SA_KEY.replace('-----BEGIN PRIVATE KEY-----','').replace('-----END PRIVATE KEY-----','').replace(/\s/g,'');
+  const keyBin = Uint8Array.from(atob(keyStr),c=>c.charCodeAt(0));
+  const ck = await crypto.subtle.importKey('pkcs8',keyBin,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5',ck,new TextEncoder().encode(msg));
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  const jwt = msg+'.'+sigB64;
+  const r = await fetch('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:`grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`});
+  const d = await r.json();
+  _token = d.access_token;
+  _tokenExp = Date.now() + (d.expires_in-60)*1000;
+  return _token;
+}
+
+async function sheetsRead(range) {
+  const t = await getToken();
+  const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}`,{headers:{Authorization:`Bearer ${t}`}});
+  if(!r.ok) throw new Error(await r.text());
+  return (await r.json()).values||[];
+}
+
+async function sheetsWrite(range, values) {
+  const t = await getToken();
+  const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?valueInputOption=RAW`,{method:'PUT',headers:{Authorization:`Bearer ${t}`,'Content-Type':'application/json'},body:JSON.stringify({range,majorDimension:'ROWS',values})});
+  if(!r.ok) throw new Error(await r.text());
+}
+
+async function sheetsClear(range) {
+  const t = await getToken();
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}:clear`,{method:'POST',headers:{Authorization:`Bearer ${t}`}});
+}
+
+async function ensureSheets() {
+  const t = await getToken();
+  const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`,{headers:{Authorization:`Bearer ${t}`}});
+  const info = await r.json();
+  const existing = info.sheets.map(s=>s.properties.title);
+  const needed = ['主資料','舊制獎金','備份清單'];
+  const toAdd = needed.filter(n=>!existing.includes(n));
+  if(!toAdd.length) return;
+  await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{method:'POST',headers:{Authorization:`Bearer ${t}`,'Content-Type':'application/json'},body:JSON.stringify({requests:toAdd.map(title=>({addSheet:{properties:{title}}}))})});
+}
+
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  if(!dot||!txt) return;
+  const colors = {ok:'#5a9e7a', err:'#c05050', loading:'#c8a96e'};
+  dot.style.background = colors[state]||'#5a5650';
+  if(state==='loading') dot.style.animation='pulse 1s infinite';
+  else dot.style.animation='';
+  txt.textContent = text;
+}
+
+// ══════════════════════════════════════
+// PERSIST — GOOGLE SHEETS BACKEND
+// ══════════════════════════════════════
+let _saving = false;
+let _pendingSave = false;
+
+async function persist() {
+  // Also keep localStorage as fallback
+  try { localStorage.setItem('tanso_mgr', JSON.stringify(S)); } catch(e) {}
+  if (_saving) { _pendingSave = true; return; }
+  _saving = true;
+  setSyncStatus('loading','儲存中...');
+  try {
+    await ensureSheets();
+    const json = JSON.stringify(S);
+    // Split into chunks if needed (Sheets cell limit ~50000 chars)
+    const chunks = [];
+    for(let i=0;i<json.length;i+=40000) chunks.push([json.slice(i,i+40000)]);
+    await sheetsClear('主資料!A1:A100');
+    await sheetsWrite('主資料!A1', chunks);
+    setSyncStatus('ok','已同步 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+  } catch(e) {
+    setSyncStatus('err','同步失敗');
+    console.error('Sheets save error:', e);
+  }
+  _saving = false;
+  if(_pendingSave) { _pendingSave=false; persist(); }
+}
+
+async function loadFromSheets() {
+  setSyncStatus('loading','載入中...');
+  try {
+    await ensureSheets();
+    const rows = await sheetsRead('主資料!A1:A100');
+    if(rows.length) {
+      const json = rows.map(r=>r[0]||'').join('');
+      if(json.trim().startsWith('{')) {
+        const loaded = JSON.parse(json);
+        Object.assign(S, loaded);
+        setSyncStatus('ok','已載入');
+        return true;
+      }
+    }
+    setSyncStatus('ok','新資料');
+    renderContracts();
+    renderLegacyCases();
+    refreshContractSelect();
+    return false;
+  } catch(e) {
+    setSyncStatus('err','載入失敗，使用本機資料');
+    console.error('Sheets load error:', e);
+    return false;
+  }
+}
+
+// ══════════════════════════════════════
+// AUTO BACKUP — 每月月底
+// ══════════════════════════════════════
+async function checkMonthlyBackup() {
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  const today = now.getDate();
+  const key = `tanso_backup_${now.getFullYear()}_${now.getMonth()+1}`;
+  if(today >= lastDay-1 && !localStorage.getItem(key)) {
+    await doBackup();
+    localStorage.setItem(key, '1');
+  }
+}
+
+async function doBackup() {
+  const now = new Date();
+  const label = `備份_${now.getFullYear()}_${String(now.getMonth()+1).padStart(2,'0')}`;
+  try {
+    const t = await getToken();
+    // Check if backup sheet exists
+    const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`,{headers:{Authorization:`Bearer ${t}`}});
+    const info = await r.json();
+    const existing = info.sheets.map(s=>s.properties.title);
+    if(!existing.includes(label)) {
+      await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`,{method:'POST',headers:{Authorization:`Bearer ${t}`,'Content-Type':'application/json'},body:JSON.stringify({requests:[{addSheet:{properties:{title:label}}}]})});
+    }
+    const json = JSON.stringify(S);
+    const chunks = [];
+    for(let i=0;i<json.length;i+=40000) chunks.push([json.slice(i,i+40000)]);
+    await sheetsWrite(`${label}!A1`, chunks);
+    toast(`已備份：${label}`);
+  } catch(e) {
+    console.error('Backup failed:', e);
+  }
+}
+
+async function manualBackup() {
+  toast('備份中...');
+  await doBackup();
+}
+
+// ══════════════════════════════════════
+// LOCAL STATE (loadState modified)
+// ══════════════════════════════════════
+function loadState(){
+  try{
+    const r = localStorage.getItem('tanso_mgr');
+    if(r) Object.assign(S, JSON.parse(r));
+  }catch(e){}
+  if(!S.staff||!S.staff.length){
+    S.staff = [
+      {id:'s1',name:'JuJu',role:'主責設計',salary:56299},
+      {id:'s2',name:'巧毓',role:'PM/AE',salary:47832},
+      {id:'s3',name:'慈欣',role:'文案企劃',salary:46772},
+      {id:'s4',name:'粘',role:'主責設計',salary:39966},
+      {id:'s5',name:'巧如',role:'主責設計',salary:55435},
+      {id:'s6',name:'葉蓁',role:'助理設計',salary:46772},
+      {id:'s7',name:'宣嶧',role:'助理設計',salary:38590},
+      {id:'s8',name:'靜儒',role:'PM/AE',salary:46453},
+    ];
+  }
+  if(!S.settings) S.settings={defA:35,defC:20};
+  // set defaults
+  document.getElementById('def-a').value = S.settings.defA;
+  document.getElementById('def-c').value = S.settings.defC;
+  document.getElementById('b-ra').value = S.settings.defA;
+  document.getElementById('b-rc').value = S.settings.defC;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('b-date').value = today;
+  document.getElementById('pb-date').value = today;
+  // set forecast month to current
+  const now = new Date();
+  document.getElementById('fc-month').value = now.getMonth()+1;
+}
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const pages=['pg-bonus','pg-list','pg-contract','pg-passbook','pg-ledger','pg-forecast','pg-staff','pg-settings'];
+  const idx=pages.indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if(id==='pg-bonus') refreshContractSelect();
+  if(id==='pg-list') renderProjList();
+  if(id==='pg-contract') renderContracts();
+  if(id==='pg-passbook') renderPassbook();
+  if(id==='pg-ledger') renderLedger();
+  if(id==='pg-forecast') renderForecast();
+  if(id==='pg-staff') renderStaffOverview();
+  if(id==='pg-settings') renderStaffSettings();
+}
+
+// ══════════════════════════════════════
+// BONUS CALCULATOR
+// ══════════════════════════════════════
+let selectedStaff = new Set();
+let extRows = [];
+
+function renderStaffChips(){
+  const wrap = document.getElementById('staff-chips');
+  wrap.innerHTML='';
+  S.staff.forEach(s=>{
+    const chip = document.createElement('div');
+    chip.className = 'staff-chip' + (selectedStaff.has(s.id)?' selected':'');
+    chip.onclick = ()=>{ toggleStaff(s.id); };
+    chip.innerHTML = `<span>${s.name}</span><span class="tag" style="font-size:10px;padding:1px 5px">${s.role}</span>`;
+    wrap.appendChild(chip);
+  });
+}
+
+function toggleStaff(id){
+  if(selectedStaff.has(id)) selectedStaff.delete(id);
+  else selectedStaff.add(id);
+  renderStaffChips();
+  renderAllocRows();
+  recalc();
+}
+
+function renderAllocRows(){
+  const wrap = document.getElementById('alloc-rows');
+  wrap.innerHTML='';
+  const allSelected = [...selectedStaff].map(id=>S.staff.find(s=>s.id===id)).filter(Boolean);
+  const allExt = extRows;
+  const all = [...allSelected.map(s=>({key:'s'+s.id,name:s.name,role:s.role,isExt:false})),
+               ...allExt.map((e,i)=>({key:'e'+i,name:e.name,role:e.role,isExt:true}))];
+
+  if(!all.length){
+    wrap.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 0">請先選取人員</div>';
+    return;
+  }
+
+  all.forEach(p=>{
+    const row = document.createElement('div');
+    row.className='alloc-row';
+    row.innerHTML=`
+      <span style="font-size:13px">${p.name}</span>
+      <select id="role-${p.key}" style="font-size:11px;padding:3px 6px" onchange="recalc()">
+        <option ${p.role==='執行總監'?'selected':''}>執行總監</option>
+        <option ${p.role==='PM/AE'?'selected':''}>PM/AE</option>
+        <option ${p.role==='主責設計'?'selected':''}>主責設計</option>
+        <option ${p.role==='文案企劃'?'selected':''}>文案企劃</option>
+        <option ${p.role==='助理設計'?'selected':''}>助理設計</option>
+        <option ${p.role==='外部人員'?'selected':''}>外部人員</option>
+        <option ${p.role==='其他'?'selected':''}>其他</option>
+      </select>
+      <input type="number" id="pct-${p.key}" value="0" min="0" max="100" placeholder="%" oninput="recalc()">
+      <span class="mono" id="earn-${p.key}" style="color:var(--accent);font-size:13px;text-align:right">0</span>
+      <span style="cursor:pointer;color:var(--text3)" onclick="removeAllocPerson('${p.key}','${p.isExt}')">✕</span>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function removeAllocPerson(key, isExt){
+  if(isExt==='true'){
+    const idx = parseInt(key.replace('e',''));
+    extRows.splice(idx,1);
+  } else {
+    const sid = key.replace('s','');
+    selectedStaff.delete(sid);
+  }
+  renderStaffChips();
+  renderAllocRows();
+  recalc();
+}
+
+function addExtRow(){
+  extRows.push({name:'',role:'外部人員'});
+  renderExtRows();
+}
+
+function renderExtRows(){
+  const wrap = document.getElementById('ext-rows');
+  wrap.innerHTML='';
+  extRows.forEach((e,i)=>{
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;gap:8px;margin-bottom:6px;align-items:center';
+    row.innerHTML=`
+      <input type="text" placeholder="姓名" value="${e.name}" style="width:90px"
+        oninput="extRows[${i}].name=this.value;renderAllocRows();recalc()">
+      <select style="flex:1" onchange="extRows[${i}].role=this.value;renderAllocRows();recalc()">
+        <option ${e.role==='外部人員'?'selected':''}>外部人員</option>
+        <option ${e.role==='文案企劃'?'selected':''}>文案企劃</option>
+        <option ${e.role==='主責設計'?'selected':''}>主責設計</option>
+        <option ${e.role==='其他'?'selected':''}>其他</option>
+      </select>
+      <span style="cursor:pointer;color:var(--text3)" onclick="extRows.splice(${i},1);renderExtRows();renderAllocRows();recalc()">✕</span>
+    `;
+    wrap.appendChild(row);
+  });
+}
+
+function getAllocPersons(){
+  const allSelected = [...selectedStaff].map(id=>S.staff.find(s=>s.id===id)).filter(Boolean)
+    .map(s=>({key:'s'+s.id,name:s.name,role:s.role}));
+  const allExt = extRows.map((e,i)=>({key:'e'+i,name:e.name||'外部',role:e.role}));
+  return [...allSelected,...allExt];
+}
+
+function recalc(){
+  const gross = parseFloat(document.getElementById('b-gross').value)||0;
+  const rA = parseFloat(document.getElementById('b-ra').value)||0;
+  const rC = parseFloat(document.getElementById('b-rc').value)||0;
+  const rB = Math.max(0,100-rA-rC);
+  document.getElementById('b-pct').textContent=rB;
+  const amtA=Math.round(gross*rA/100);
+  const amtC=Math.round(gross*rC/100);
+  const amtB=gross-amtA-amtC;
+  // bars
+  ['a','b','c'].forEach(k=>{
+    const pct=k==='a'?rA:k==='b'?rB:rC;
+    document.getElementById('bar-'+k).style.width=pct+'%';
+    document.getElementById('amt-'+k).textContent=fmt(k==='a'?amtA:k==='b'?amtB:amtC);
+  });
+  document.getElementById('rs-a').textContent='$'+fmt(amtA);
+  document.getElementById('rs-b').textContent='$'+fmt(amtB);
+  document.getElementById('rs-c').textContent='$'+fmt(amtC);
+  // C split
+  const simPct=parseFloat(document.getElementById('b-sim-pct').value)||50;
+  const juliaPct=parseFloat(document.getElementById('b-julia-pct').value)||50;
+  document.getElementById('amt-sim').textContent=fmt(Math.round(amtC*simPct/100));
+  document.getElementById('amt-julia').textContent=fmt(Math.round(amtC*juliaPct/100));
+  // B split
+  const ivy=parseFloat(document.getElementById('b-ivy').value)||0;
+  const bNet=amtB-ivy;
+  let totalPct=0, totalAlloc=0;
+  getAllocPersons().forEach(p=>{
+    const pctEl=document.getElementById('pct-'+p.key);
+    const pct=pctEl?parseFloat(pctEl.value)||0:0;
+    totalPct+=pct;
+    const earn=Math.round(bNet*pct/100);
+    totalAlloc+=earn;
+    const earnEl=document.getElementById('earn-'+p.key);
+    if(earnEl) earnEl.textContent=fmt(earn);
+  });
+  document.getElementById('b-alloc-pct').textContent=totalPct+'%';
+  const remain=bNet-totalAlloc;
+  const remEl=document.getElementById('b-remain');
+  remEl.textContent=fmt(remain);
+  remEl.style.color=remain<0?'var(--danger)':'var(--text2)';
+  // result table
+  renderResultTable(amtC,simPct,juliaPct,bNet,ivy);
+}
+
+function renderResultTable(amtC,simPct,juliaPct,bNet,ivy){
+  const tbody=document.getElementById('rs-tbody');
+  tbody.innerHTML='';
+  const rows=[];
+  rows.push({name:'Sim',role:'創辦人',acct:'C',pctLabel:simPct+'%',earn:Math.round(amtC*simPct/100)});
+  rows.push({name:'Julia',role:'創辦人',acct:'C',pctLabel:juliaPct+'%',earn:Math.round(amtC*juliaPct/100)});
+  if(ivy>0) rows.push({name:'Ivy',role:'財務管理',acct:'B',pctLabel:'固定',earn:ivy});
+  getAllocPersons().forEach(p=>{
+    const pctEl=document.getElementById('pct-'+p.key);
+    const roleEl=document.getElementById('role-'+p.key);
+    const pct=pctEl?parseFloat(pctEl.value)||0:0;
+    const role=roleEl?roleEl.value:p.role;
+    if(pct>0) rows.push({name:p.name,role,acct:'B',pctLabel:pct+'%',earn:Math.round(bNet*pct/100)});
+  });
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.name}</td><td>${r.role}</td><td><span class="badge badge-${r.acct.toLowerCase()}">${r.acct}帳</span></td><td>${r.pctLabel}</td><td class="text-right amt">$${fmt(r.earn)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function saveBonus(){
+  const client=document.getElementById('b-client').value.trim();
+  const gross=parseFloat(document.getElementById('b-gross').value)||0;
+  if(!client||!gross){toast('請填寫客戶名稱與金額');return;}
+  const rA=parseFloat(document.getElementById('b-ra').value)||0;
+  const rC=parseFloat(document.getElementById('b-rc').value)||0;
+  const rB=Math.max(0,100-rA-rC);
+  const amtA=Math.round(gross*rA/100);
+  const amtC=Math.round(gross*rC/100);
+  const amtB=gross-amtA-amtC;
+  const ivy=parseFloat(document.getElementById('b-ivy').value)||0;
+  const bNet=amtB-ivy;
+  const simPct=parseFloat(document.getElementById('b-sim-pct').value)||50;
+  const juliaPct=parseFloat(document.getElementById('b-julia-pct').value)||50;
+  const allocs=[];
+  allocs.push({name:'Sim',role:'創辦人',acct:'C',pct:simPct,earn:Math.round(amtC*simPct/100)});
+  allocs.push({name:'Julia',role:'創辦人',acct:'C',pct:juliaPct,earn:Math.round(amtC*juliaPct/100)});
+  if(ivy>0) allocs.push({name:'Ivy',role:'財務管理',acct:'B',pct:0,earn:ivy});
+  getAllocPersons().forEach(p=>{
+    const pctEl=document.getElementById('pct-'+p.key);
+    const roleEl=document.getElementById('role-'+p.key);
+    const pct=pctEl?parseFloat(pctEl.value)||0:0;
+    const role=roleEl?roleEl.value:p.role;
+    if(pct>0) allocs.push({name:p.name,role,acct:'B',pct,earn:Math.round(bNet*pct/100)});
+  });
+  const proj={
+    id:'p'+Date.now(),
+    client,
+    period:document.getElementById('b-period').value,
+    gross,
+    date:document.getElementById('b-date').value,
+    ratioA:rA,ratioB:rB,ratioC:rC,
+    amtA,amtB,amtC,ivy,allocs,
+    createdAt:new Date().toISOString()
+  };
+  S.projects.unshift(proj);
+  persist();
+  toast('個案已儲存！');
+}
+
+function clearBonus(){
+  document.getElementById('b-client').value='';
+  document.getElementById('b-period').value='';
+  document.getElementById('b-gross').value='';
+  document.getElementById('b-ivy').value='0';
+  document.getElementById('b-ra').value=S.settings.defA;
+  document.getElementById('b-rc').value=S.settings.defC;
+  selectedStaff.clear();
+  extRows=[];
+  renderStaffChips();
+  renderAllocRows();
+  renderExtRows();
+  recalc();
+}
+
+// ══════════════════════════════════════
+// PROJECT LIST
+// ══════════════════════════════════════
+function renderProjList(){
+  const wrap=document.getElementById('proj-list-wrap');
+  const items=[];
+  // 請款追蹤
+  (S.contracts||[]).forEach(c=>{
+    const total=c.phases.reduce((s,p)=>s+p.amt,0);
+    const cashed=c.phases.filter(p=>p.status==='已兌現').reduce((s,p)=>s+p.amt,0);
+    const pending=c.phases.filter(p=>p.status!=='已兌現'&&p.status!=='已收款').length;
+    items.push({id:c.id, name:(c.builder?c.builder+'・':'')+c.name, sub:c.co+' ／ '+c.period, total, cashed, pending, tag:'請款', tagColor:'var(--accent2)'});
+  });
+  // 舊制
+  (S.legacyCases||[]).forEach(c=>{
+    const total=c.phases.reduce((s,p)=>s+p.gross,0);
+    items.push({id:'lc_'+c.id, name:c.client, sub:'舊制 ／ '+c.period, total, cashed:0, pending:0, tag:'舊制', tagColor:'var(--accent)'});
+  });
+  // 新制
+  (S.newCases||[]).forEach(c=>{
+    const total=c.phases.reduce((s,p)=>s+p.gross,0);
+    items.push({id:'nc_'+c.id, name:c.client, sub:'新制（阿米巴）／ '+c.period, total, cashed:0, pending:0, tag:'新制', tagColor:'var(--accent3)'});
+  });
+  document.getElementById('proj-count').textContent=items.length;
+  if(!items.length){wrap.innerHTML='<div class="empty">尚無個案資料</div>';return;}
+  wrap.innerHTML='';
+  items.forEach(item=>{
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;background:var(--surface2);transition:border-color .15s;';
+    div.onmouseenter=()=>div.style.borderColor='var(--accent)';
+    div.onmouseleave=()=>div.style.borderColor='var(--border)';
+    div.innerHTML=`
+      <div>
+        <div style="font-weight:500">${item.name} <span class="tag" style="color:${item.tagColor};border-color:${item.tagColor}">${item.tag}</span></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">${item.sub||'—'}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'DM Mono',monospace;font-size:15px;color:var(--accent)">$${fmt(item.total)}</div>
+        ${item.tag==='請款'?`<div style="font-size:11px;color:var(--text3)">已兌現 $${fmt(item.cashed)}${item.pending?' ／ '+item.pending+'期待處理':''}</div>`:''}
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+function showProjDetail(id){
+  selectedProjId=id;
+  const p=S.projects.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('proj-detail').style.display='block';
+  document.getElementById('det-title').textContent=`${p.client} ${p.period||''}`;
+  document.getElementById('det-meta').textContent=`${p.date}　收款 $${fmt(p.gross)}`;
+  document.getElementById('det-a').textContent='$'+fmt(p.amtA);
+  document.getElementById('det-b').textContent='$'+fmt(p.amtB);
+  document.getElementById('det-c').textContent='$'+fmt(p.amtC);
+  const tbody=document.getElementById('det-tbody');
+  tbody.innerHTML='';
+  (p.allocs||[]).forEach(a=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${a.name}</td><td>${a.role}</td><td><span class="badge badge-${a.acct.toLowerCase()}">${a.acct}帳</span></td><td>${a.pct?a.pct+'%':'固定'}</td><td class="text-right amt">$${fmt(a.earn)}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('proj-detail').scrollIntoView({behavior:'smooth'});
+}
+
+function deleteProj(){
+  if(!selectedProjId||!confirm('確認刪除此個案？')) return;
+  S.projects=S.projects.filter(p=>p.id!==selectedProjId);
+  selectedProjId=null;
+  document.getElementById('proj-detail').style.display='none';
+  persist(); renderProjList(); toast('已刪除');
+}
+
+// ══════════════════════════════════════
+// CONTRACT TRACKING
+// ══════════════════════════════════════
+let _mcEditId = null; // 編輯模式的案子 id
+
+function openContractModal(){
+  _mcEditId = null;
+  document.getElementById('mc-modal-title').textContent = '新增請款案子';
+  document.getElementById('mc-co').value = '探索';
+  document.getElementById('mc-builder').value = '';
+  document.getElementById('mc-name').value = '';
+  document.getElementById('mc-period').value = '';
+  document.getElementById('mc-total').value = '';
+  document.getElementById('mc-tax').value = '1';
+  document.getElementById('mc-phases').innerHTML='';
+  addPhase();
+  document.getElementById('modal-contract').classList.add('open');
+}
+
+// 編輯整個案子
+function openEditContract(cid) {
+  const c = S.contracts.find(x=>x.id===cid);
+  if(!c) return;
+  _mcEditId = cid;
+  document.getElementById('mc-modal-title').textContent = '編輯案子';
+  document.getElementById('mc-co').value = c.co;
+  document.getElementById('mc-builder').value = c.builder||'';
+  document.getElementById('mc-name').value = c.name;
+  document.getElementById('mc-period').value = c.period||'';
+  document.getElementById('mc-total').value = c.total||'';
+  document.getElementById('mc-tax').value = c.tax?'1':'0';
+  // 填入所有期次
+  document.getElementById('mc-phases').innerHTML='';
+  c.phases.forEach((p,i)=>{
+    addPhaseWithData(p, i);
+  });
+  document.getElementById('modal-contract').classList.add('open');
+}
+
+// 編輯單一期次
+let _mcPhaseEditId = null;
+let _mcPhaseEditIdx = null;
+
+function openEditPhase(cid, phaseIdx) {
+  const c = S.contracts.find(x=>x.id===cid);
+  if(!c||!c.phases[phaseIdx]) return;
+  _mcEditId = cid;
+  _mcPhaseEditIdx = phaseIdx;
+  const p = c.phases[phaseIdx];
+  document.getElementById('mc-modal-title').textContent = `編輯 ${c.name} 第${p.no}期`;
+  document.getElementById('mc-co').value = c.co;
+  document.getElementById('mc-builder').value = c.builder||'';
+  document.getElementById('mc-name').value = c.name;
+  document.getElementById('mc-period').value = c.period||'';
+  document.getElementById('mc-total').value = c.total||'';
+  document.getElementById('mc-tax').value = c.tax?'1':'0';
+  document.getElementById('mc-phases').innerHTML='';
+  addPhaseWithData(p, phaseIdx);
+  document.getElementById('modal-contract').classList.add('open');
+}
+
+function addPhaseWithData(p, idx) {
+  const isFirst = p.no===1;
+  const row = document.createElement('div');
+  row.style.cssText = 'border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px;';
+  row.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:500;color:var(--accent)">第${p.no}期</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">金額</div>
+        <input type="number" value="${p.amt||''}" placeholder="0" style="font-size:13px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">狀態</div>
+        <select style="font-size:12px;width:100%">
+          ${isFirst?`<option ${p.status==='簽約款'?'selected':''}>簽約款</option>`:''}
+          <option ${p.status==='待請款'?'selected':''}>待請款</option>
+          <option ${p.status==='已請款'?'selected':''}>已請款</option>
+          <option ${p.status==='已收款'?'selected':''}>已收款</option>
+          <option ${p.status==='已兌現'?'selected':''}>已兌現</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">合約請款時間</div>
+        <input type="date" value="${p.planDate||''}" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">開發票送款時間</div>
+        <input type="date" value="${p.invoiceDate||''}" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">收款時間</div>
+        <input type="date" value="${p.receiveDate||''}" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">兌現時間</div>
+        <input type="date" value="${p.cashDate||''}" style="font-size:11px;width:100%">
+      </div>
+    </div>
+  `;
+  document.getElementById('mc-phases').appendChild(row);
+}
+function addPhase(){
+  const wrap=document.getElementById('mc-phases');
+  const idx=wrap.children.length+1;
+  const isFirst=idx===1;
+  const row=document.createElement('div');
+  row.style.cssText='border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin-bottom:8px;';
+  row.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:500;color:var(--accent)">第${idx}期</span>
+      <span style="cursor:pointer;color:var(--text3);font-size:13px" onclick="this.closest('[style]').remove()">✕</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">金額</div>
+        <input type="number" placeholder="0" style="font-size:13px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">狀態</div>
+        <select style="font-size:12px;width:100%">
+          ${isFirst?'<option>簽約款</option>':''}
+          <option>待請款</option><option>已請款</option><option>已收款</option><option>已兌現</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">合約請款時間</div>
+        <input type="date" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">開發票送款時間</div>
+        <input type="date" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">收款時間</div>
+        <input type="date" style="font-size:11px;width:100%">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:3px">兌現時間</div>
+        <input type="date" style="font-size:11px;width:100%">
+      </div>
+    </div>
+  `;
+  wrap.appendChild(row);
+}
+
+function saveContract(){
+  const co=document.getElementById('mc-co').value;
+  const builder=document.getElementById('mc-builder').value.trim();
+  const name=document.getElementById('mc-name').value.trim();
+  if(!name){toast('請填寫案名');return;}
+
+  // 讀取所有期次資料
+  const newPhases=[];
+  Array.from(document.getElementById('mc-phases').children).forEach((row,i)=>{
+    const nums=row.querySelectorAll('input[type=number]');
+    const dates=row.querySelectorAll('input[type=date]');
+    const sel=row.querySelector('select');
+    newPhases.push({
+      no:i+1,
+      amt:         parseFloat(nums[0]?.value)||0,
+      planDate:    dates[0]?.value||'',
+      invoiceDate: dates[1]?.value||'',
+      receiveDate: dates[2]?.value||'',
+      cashDate:    dates[3]?.value||'',
+      status:      sel?.value||'待請款'
+    });
+  });
+
+  if(_mcEditId && _mcPhaseEditIdx!==null) {
+    // 只更新單一期次
+    const c = S.contracts.find(x=>x.id===_mcEditId);
+    if(c && newPhases[0]) {
+      c.phases[_mcPhaseEditIdx] = {...c.phases[_mcPhaseEditIdx], ...newPhases[0]};
+      c.co=co; c.builder=builder; c.name=name;
+      c.period=document.getElementById('mc-period').value;
+      c.total=parseFloat(document.getElementById('mc-total').value)||0;
+      c.tax=document.getElementById('mc-tax').value==='1';
+    }
+    _mcPhaseEditIdx = null;
+  } else if(_mcEditId) {
+    // 更新整個案子
+    const c = S.contracts.find(x=>x.id===_mcEditId);
+    if(c){ Object.assign(c,{co,builder,name,period:document.getElementById('mc-period').value,total:parseFloat(document.getElementById('mc-total').value)||0,tax:document.getElementById('mc-tax').value==='1',phases:newPhases}); }
+  } else {
+    // 新增
+    S.contracts.push({id:'c'+Date.now(),co,builder,name,period:document.getElementById('mc-period').value,total:parseFloat(document.getElementById('mc-total').value)||0,tax:document.getElementById('mc-tax').value==='1',phases:newPhases});
+  }
+  _mcEditId=null;
+  closeModal('modal-contract');
+  renderContracts();
+  refreshContractSelect();
+  toast('已儲存');
+  persist();
+}
+
+function switchContractTab(tab){
+  contractTab=tab;
+  document.querySelectorAll('#pg-contract .sub-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['探索','時代','碩人','尚未進款'][i]===tab);
+  });
+  renderContracts();
+}
+
+function renderContracts(){
+  const wrap=document.getElementById('contract-wrap');
+  if(contractTab==='尚未進款'){
+    // 尚未進款彙總
+    const pending=S.contracts.flatMap(c=>c.phases.filter(p=>p.status!=='已收款').map(p=>({...p,cname:c.name,builder:c.builder,co:c.co})));
+    if(!pending.length){wrap.innerHTML='<div class="empty">目前無尚未進款項</div>';return;}
+    wrap.innerHTML=`<div style="overflow-x:auto"><table class="tbl" style="min-width:600px"><thead><tr>
+      <th>公司</th><th>案名</th><th>期次</th>
+      <th>合約請款</th><th>開發票</th><th>收款</th><th>兌現</th>
+      <th class="text-right">金額</th><th>狀態</th>
+    </tr></thead><tbody>${
+      pending.map(p=>`<tr>
+        <td>${p.co}</td>
+        <td>${p.builder||''}・${p.cname}</td>
+        <td>第${p.no}期</td>
+        <td style="font-size:11px">${p.planDate||'—'}</td>
+        <td style="font-size:11px">${p.invoiceDate||'—'}</td>
+        <td style="font-size:11px">${p.receiveDate||'—'}</td>
+        <td style="font-size:11px">${p.cashDate||'—'}</td>
+        <td class="text-right amt-dim">$${fmt(p.amt)}</td>
+        <td><span class="badge ${p.status==='已兌現'||p.status==='已收款'?'badge-ok':p.status==='已請款'?'badge-wait':p.status==='簽約款'?'badge-b':'badge-pending'}">${p.status}</span></td>
+      </tr>`).join('')
+    }</tbody></table></div>`;
+    return;
+  }
+  const list=S.contracts.filter(c=>c.co===contractTab);
+  if(!list.length){wrap.innerHTML='<div class="empty">此公司尚無案子</div>';return;}
+  wrap.innerHTML='';
+  list.forEach(c=>{
+    const card=document.createElement('div');
+    card.className='card';
+    const cashed=c.phases.filter(p=>p.status==='已兌現').reduce((s,p)=>s+p.amt,0);
+    const total=c.phases.reduce((s,p)=>s+p.amt,0);
+    const isCollapsed = (S.contractCollapsed||{})[c.id];
+    card.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isCollapsed?'0':'10px'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <button onclick="moveContract('${c.id}',-1)" style="font-size:10px;padding:0 4px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;line-height:1.4">▲</button>
+            <button onclick="moveContract('${c.id}',1)" style="font-size:10px;padding:0 4px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;line-height:1.4">▼</button>
+          </div>
+          <div>
+            <span style="font-weight:500">${c.builder?c.builder+'・':''}${c.name}</span>
+            <span class="tag" style="margin-left:6px">${c.tax?'含稅':'不含稅'}</span>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px">${c.period||'—'}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="text-right">
+            <div class="mono" style="font-size:14px;color:var(--accent)">$${fmt(cashed)} / $${fmt(total)}</div>
+            <div style="font-size:11px;color:var(--text2)">已兌現 / 請款總額　合約 $${fmt(c.total)}</div>
+          </div>
+          <button onclick="toggleContractCollapse('${c.id}')"
+            style="font-size:18px;padding:2px 8px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text3);cursor:pointer;line-height:1">
+            ${isCollapsed?'▶':'▼'}
+          </button>
+        </div>
+      </div>
+      <div id="contract-body-${c.id}" style="display:${isCollapsed?'none':'block'}">
+      <div style="overflow-x:auto">
+      <table class="tbl" style="font-size:12px;min-width:700px">
+        <thead><tr>
+          <th style="white-space:nowrap">期</th>
+          <th style="text-align:right;white-space:nowrap">金額</th>
+          <th style="white-space:nowrap">合約請款時間</th>
+          <th style="white-space:nowrap">開發票送款</th>
+          <th style="white-space:nowrap">收款時間</th>
+          <th style="white-space:nowrap">兌現時間</th>
+          <th style="white-space:nowrap">狀態</th>
+          <th style="white-space:nowrap"></th>
+        </tr></thead>
+        <tbody>${c.phases.map((p,i)=>{
+          const statusColor=p.status==='已兌現'||p.status==='已收款'?'badge-ok':p.status==='已請款'?'badge-wait':p.status==='簽約款'?'badge-b':'badge-pending';
+          return `<tr>
+            <td style="white-space:nowrap;font-weight:500">第${p.no}期</td>
+            <td style="text-align:right;font-family:'DM Mono',monospace;color:var(--accent)">${p.amt?fmt(p.amt):'—'}</td>
+            <td style="font-size:11px;color:var(--text2)">${p.planDate||'—'}</td>
+            <td style="font-size:11px;color:var(--text2)">${p.invoiceDate||'—'}</td>
+            <td style="font-size:11px;color:var(--text2)">${p.receiveDate||'—'}</td>
+            <td style="font-size:11px;color:var(--text2)">${p.cashDate||'—'}</td>
+            <td><span class="badge ${statusColor}">${p.status}</span></td>
+            <td>
+              <button onclick="openEditPhase('${c.id}',${i})"
+                style="font-size:11px;padding:3px 8px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer">
+                編輯
+              </button>
+            </td>
+          </tr>`;}).join('')}
+        </tbody>
+      </table></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="addPhaseToContract('${c.id}')">＋ 新增期次</button>
+          <button class="btn btn-secondary btn-sm" onclick="removeLastPhase('${c.id}')" style="color:var(--danger);border-color:var(--danger)">－ 刪除末期</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEditContract('${c.id}')">✎ 編輯案子</button>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="deleteContract('${c.id}')">刪除案子</button>
+      </div>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function updatePhaseStatus(cid,phaseIdx,val){
+  updatePhaseField(cid,phaseIdx,'status',val);
+}
+
+function updatePhaseField(cid,phaseIdx,field,val){
+  const c=S.contracts.find(x=>x.id===cid);
+  if(!c||!c.phases[phaseIdx]) return;
+  c.phases[phaseIdx][field]=val;
+  // 狀態改變才重繪，其他欄位靜默儲存
+  if(field==='status') renderContracts();
+  persist();
+}
+
+function deleteContract(id){
+  const c=S.contracts.find(x=>x.id===id);
+  if(!c) return;
+  const name=(c.builder?c.builder+'・':'')+c.name;
+  if(!confirm('確定要刪除「'+name+'」嗎？此操作無法復原，案子所有期次資料都會消失。')) return;
+  if(!confirm('再次確認：刪除「'+name+'」？')) return;
+  S.contracts=S.contracts.filter(c=>c.id!==id);
+  renderContracts(); toast('已刪除：'+name);
+  persist();
+}
+
+
+
+function moveContract(id, dir) {
+  const list = S.contracts.filter(c=>c.co===contractTab);
+  const allIdx = S.contracts.findIndex(c=>c.id===id);
+  const tabIdx = list.findIndex(c=>c.id===id);
+  const targetTabIdx = tabIdx + dir;
+  if(targetTabIdx<0 || targetTabIdx>=list.length) return;
+  const targetId = list[targetTabIdx].id;
+  const targetAllIdx = S.contracts.findIndex(c=>c.id===targetId);
+  // swap
+  [S.contracts[allIdx], S.contracts[targetAllIdx]] = [S.contracts[targetAllIdx], S.contracts[allIdx]];
+  persist();
+  renderContracts();
+}
+
+function toggleContractCollapse(id) {
+  if(!S.contractCollapsed) S.contractCollapsed={};
+  S.contractCollapsed[id] = !S.contractCollapsed[id];
+  persist();
+  renderContracts();
+}
+
+function addPhaseToContract(cid){
+  const c=S.contracts.find(x=>x.id===cid);
+  if(!c) return;
+  const no = c.phases.length+1;
+  c.phases.push({no, amt:0, planDate:'', invoiceDate:'', receiveDate:'', cashDate:'', status:'待請款'});
+  persist();
+  renderContracts();
+}
+
+function removeLastPhase(cid){
+  const c=S.contracts.find(x=>x.id===cid);
+  if(!c||c.phases.length===0) return;
+  if(!confirm('確定刪除第'+c.phases.length+'期？')) return;
+  c.phases.pop();
+  persist();
+  renderContracts();
+}
+
+// ══════════════════════════════════════
+// PASSBOOK
+// ══════════════════════════════════════
+function openPbModal(){
+  document.getElementById('pb-co').value=pbTab==='合計'?'探索':pbTab;
+  document.getElementById('modal-pb').classList.add('open');
+}
+
+function savePb(){
+  const entry={
+    id:'pb'+Date.now(),
+    co:document.getElementById('pb-co').value,
+    date:document.getElementById('pb-date').value,
+    summary:document.getElementById('pb-summary').value,
+    ticket:document.getElementById('pb-ticket').value,
+    target:document.getElementById('pb-target').value,
+    detail:document.getElementById('pb-detail').value,
+    out:parseFloat(document.getElementById('pb-out').value)||0,
+    in:parseFloat(document.getElementById('pb-in').value)||0,
+    type:document.getElementById('pb-type').value,
+    note:document.getElementById('pb-note').value,
+  };
+  if(!entry.date){toast('請填寫日期');return;}
+  S.passbook.push(entry);
+  S.passbook.sort((a,b)=>a.date.localeCompare(b.date));
+  persist();
+  closeModal('modal-pb');
+  renderPassbook();
+  toast('記錄已儲存');
+  // clear
+  ['pb-summary','pb-ticket','pb-target','pb-detail','pb-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pb-out').value='';
+  document.getElementById('pb-in').value='';
+}
+
+function switchPbTab(tab){
+  pbTab=tab;
+  document.querySelectorAll('#pg-passbook .sub-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['探索','時代','碩人','備用','合計'][i]===tab);
+  });
+  renderPassbook();
+}
+
+function renderPassbook(){
+  const wrap=document.getElementById('pb-wrap');
+  const now=new Date();
+  const thisMonth=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let entries;
+  if(pbTab==='合計') entries=S.passbook;
+  else entries=S.passbook.filter(e=>e.co===pbTab);
+  // balance
+  const totalIn=entries.reduce((s,e)=>s+e.in,0);
+  const totalOut=entries.reduce((s,e)=>s+e.out,0);
+  document.getElementById('pb-balance').textContent='$'+fmt(totalIn-totalOut);
+  const monthIn=entries.filter(e=>e.date.startsWith(thisMonth)).reduce((s,e)=>s+e.in,0);
+  const monthOut=entries.filter(e=>e.date.startsWith(thisMonth)).reduce((s,e)=>s+e.out,0);
+  document.getElementById('pb-in-month').textContent='$'+fmt(monthIn);
+  document.getElementById('pb-out-month').textContent='$'+fmt(monthOut);
+
+  if(!entries.length){wrap.innerHTML='<div class="empty">尚無記錄</div>';return;}
+  wrap.innerHTML=`
+    <table class="tbl">
+      <thead><tr>
+        <th>日期</th>${pbTab==='合計'?'<th>帳戶</th>':''}
+        <th>摘要</th><th>對象</th><th>細項</th><th>類型</th>
+        <th class="text-right">支出</th><th class="text-right">存入</th><th>備註</th><th></th>
+      </tr></thead>
+      <tbody>${[...entries].reverse().map(e=>`
+        <tr>
+          <td><input type="date" value="${e.date}"
+            style="font-size:12px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text);padding:2px 0;font-family:'DM Mono',monospace"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','date',this.value)"></td>
+          ${pbTab==='合計'?`<td><span class="tag">${e.co}</span></td>`:''}
+          <td><input type="text" value="${e.summary}"
+            style="font-size:13px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text);padding:2px 0;width:90px"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','summary',this.value)"></td>
+          <td><input type="text" value="${e.target||''}" placeholder="—"
+            style="font-size:12px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text2);padding:2px 0;width:70px"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','target',this.value)"></td>
+          <td><input type="text" value="${e.detail||''}" placeholder="—"
+            style="font-size:12px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text2);padding:2px 0;width:120px"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','detail',this.value)"></td>
+          <td><select style="font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 4px"
+            onchange="updatePb('${e.id}','type',this.value)">
+            ${['一般','薪資','獎金','稅款','保費','房租','請款收入','帳戶轉帳','其他'].map(t=>`<option ${t===e.type?'selected':''}>${t}</option>`).join('')}
+          </select></td>
+          <td class="text-right"><input type="number" value="${e.out||''}" placeholder="—"
+            style="font-family:'DM Mono',monospace;font-size:13px;color:var(--danger);background:transparent;border:none;border-bottom:1px solid transparent;text-align:right;width:80px;padding:2px 0"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','out',parseFloat(this.value)||0)"></td>
+          <td class="text-right"><input type="number" value="${e.in||''}" placeholder="—"
+            style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2);background:transparent;border:none;border-bottom:1px solid transparent;text-align:right;width:80px;padding:2px 0"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','in',parseFloat(this.value)||0)"></td>
+          <td><input type="text" value="${e.note||''}" placeholder=""
+            style="font-size:11px;background:transparent;border:none;border-bottom:1px solid transparent;color:var(--text2);padding:2px 0;width:70px"
+            onfocus="this.style.borderBottomColor='var(--accent)'"
+            onblur="this.style.borderBottomColor='transparent';updatePb('${e.id}','note',this.value)"></td>
+          <td><span style="cursor:pointer;color:var(--text3);font-size:12px" onclick="deletePb('${e.id}')">✕</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function updatePb(id, field, val){
+  const e = S.passbook.find(x=>x.id===id);
+  if(!e) return;
+  e[field] = val;
+  // 只有收支金額改變才重繪（餘額要更新）
+  if(field==='out'||field==='in'||field==='date') renderPassbook();
+  persist();
+}
+
+function deletePb(id){
+  if(!confirm('確認刪除此筆記錄？')) return;
+  S.passbook=S.passbook.filter(e=>e.id!==id);
+  persist(); renderPassbook(); toast('已刪除');
+}
+
+// ══════════════════════════════════════
+// LEDGER
+// ══════════════════════════════════════
+const LEDGER_SECTIONS = {
+  '人事費用':['人事管銷費','保險費'],
+  '租金':['台中房租','新竹房租','和築青風房租'],
+  '水電通訊':['水費','電費','電話費'],
+  '維護':['修繕費','法律顧問','工資費用'],
+  '辦公雜支':['文具費','版權費','設備耗材費','郵務費','雜費'],
+  '公關費用':['交際費','捐贈','餐費','差旅費','福利津貼'],
+  '外部支援':['攝影插畫智慧財'],
+  '稅務':['營業稅','營所稅','暫繳營所稅'],
+  '人員費用':['外配獎金','總監獎金','員工獎金'],
+};
+const ALL_ITEMS=[].concat(...Object.values(LEDGER_SECTIONS));
+const MONTHS=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+function getLedgerKey(year,tab,item,month){
+  return `${year}-${tab}-${item}-${month}`;
+}
+
+function getLedgerVal(year,tab,item,month){
+  const k=getLedgerKey(year,tab,item,month);
+  return (S.ledger&&S.ledger[k])||0;
+}
+
+function switchLedgerTab(tab){
+  ledgerTab=tab;
+  document.querySelectorAll('#pg-ledger .sub-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['探索','時代'][i]===tab);
+  });
+  renderLedger();
+}
+
+function renderLedger(){
+  const year=document.getElementById('ledger-year').value;
+  const wrap=document.getElementById('ledger-wrap');
+
+  // header
+  let html='<div class="ledger-scroll"><table class="ledger-tbl"><thead><tr>';
+  html+=`<th class="col-label">科目</th>`;
+  MONTHS.forEach(m=>html+=`<th>${m}</th>`);
+  html+=`<th class="col-total">合計</th>`;
+  html+='</tr></thead><tbody>';
+
+  Object.entries(LEDGER_SECTIONS).forEach(([sec,items])=>{
+    const colCount=MONTHS.length+2;
+    html+=`<tr class="lg-section"><td colspan="${colCount}" style="display:flex;align-items:center;justify-content:space-between">${sec}<button onclick="addLedgerItem('${year}','${ledgerTab}','${sec}')" style="font-size:10px;padding:1px 6px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;font-family:inherit">＋ 新增科目</button></td></tr>`;
+    const allItems=[...items,...((S.ledgerCustomItems&&S.ledgerCustomItems[sec])||[])];
+    allItems.forEach(item=>{
+      const isCustom=!items.includes(item);
+      const vals=MONTHS.map((_,mi)=>getLedgerVal(year,ledgerTab,item,mi));
+      const rowTotal=vals.reduce((s,v)=>s+v,0);
+      html+=`<tr><td class="col-label" style="${isCustom?'color:var(--accent2)':''}">${item}${isCustom?` <span style="font-size:9px;cursor:pointer;color:var(--text3)" onclick="deleteLedgerItem('${sec}','${item}')">✕</span>`:''}
+</td>`;
+      vals.forEach((v,mi)=>{
+        const hasSub = S.ledgerSub&&S.ledgerSub[getLedgerKey(year,ledgerTab,item,mi)]&&S.ledgerSub[getLedgerKey(year,ledgerTab,item,mi)].length>0;
+        html+=`<td class="lg-cell" style="position:relative">
+          <input type="number" value="${v||''}" placeholder=""
+            oninput="debounceLedger('${year}','${ledgerTab}','${item}',${mi},this.value)"
+            onchange="saveLedgerCell('${year}','${ledgerTab}','${item}',${mi},this.value)">
+          <span style="position:absolute;right:2px;top:2px;font-size:9px;cursor:pointer;color:${hasSub?'var(--accent)':'var(--border)'}" title="子項目明細" onclick="openLedgerSub('${year}','${ledgerTab}','${item}',${mi})">⊞</span>
+        </td>`;
+      });
+      html+=`<td class="col-total">${rowTotal?fmt(rowTotal):'—'}</td></tr>`;
+    });
+  });
+
+  // 年度合計
+  let grandTotal=0;
+  html+=`<tr class="lg-sum-row"><td class="col-label">年度合計</td>`;
+  MONTHS.forEach((_,mi)=>{
+    const mTotal=ALL_ITEMS.reduce((s,item)=>s+getLedgerVal(year,ledgerTab,item,mi),0);
+    grandTotal+=mTotal;
+    html+=`<td class="lg-cell">${mTotal?fmt(mTotal):'—'}</td>`;
+  });
+  html+=`<td class="col-total">${fmt(grandTotal)}</td></tr>`;
+  html+='</tbody></table></div>';
+  wrap.innerHTML=html;
+}
+
+let _ledgerTimer = null;
+function debounceLedger(year,tab,item,month,val){
+  clearTimeout(_ledgerTimer);
+  _ledgerTimer = setTimeout(()=>saveLedgerCell(year,tab,item,month,val), 800);
+}
+
+function saveLedgerCell(year,tab,item,month,val){
+  const k=getLedgerKey(year,tab,item,month);
+  const n=parseFloat(val)||0;
+  if(!S.ledger) S.ledger={};
+  if(n===0) delete S.ledger[k];
+  else S.ledger[k]=n;
+  persist();
+  renderLedger();
+}
+
+function deleteLedgerItem(sec, item){
+  if(!confirm(`確認刪除科目「${item}」及其所有資料？`)) return;
+  if(S.ledgerCustomItems&&S.ledgerCustomItems[sec])
+    S.ledgerCustomItems[sec]=S.ledgerCustomItems[sec].filter(x=>x!==item);
+  persist(); renderLedger(); toast(`已刪除：${item}`);
+}
+
+function addLedgerItem(year,tab,sec){
+  const name=prompt(`在「${sec}」下新增科目名稱：`);
+  if(!name||!name.trim()) return;
+  if(!S.ledgerCustomItems) S.ledgerCustomItems={};
+  const key=sec;
+  if(!S.ledgerCustomItems[key]) S.ledgerCustomItems[key]=[];
+  if(S.ledgerCustomItems[key].includes(name.trim())){toast('已存在此科目');return;}
+  S.ledgerCustomItems[key].push(name.trim());
+  persist();
+  renderLedger();
+  toast(`已新增：${name.trim()}`);
+}
+
+function exportLedger(){
+  const year=document.getElementById('ledger-year').value;
+  // build CSV
+  let csv='科目,'+MONTHS.join(',')+',合計\n';
+  ALL_ITEMS.forEach(item=>{
+    const vals=MONTHS.map((_,mi)=>getLedgerVal(year,ledgerTab,item,mi));
+    const total=vals.reduce((s,v)=>s+v,0);
+    csv+=item+','+vals.join(',')+','+total+'\n';
+  });
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`探索${year}年${ledgerTab}管銷年度表.csv`;
+  a.click();
+  toast('已匯出 CSV');
+}
+
+// ══════════════════════════════════════
+// FORECAST — 年度預抓表
+// ══════════════════════════════════════
+const FC_DEFAULT_FIXED = [
+  {label:'人事管銷費', amt:480000},
+  {label:'台中房租', amt:110000},
+  {label:'新竹房租', amt:5000},
+  {label:'勞退健保', amt:140000},
+  {label:'差旅費', amt:50000},
+  {label:'零用金', amt:100000},
+  {label:'貸款利息', amt:12768},
+  {label:'電話費', amt:5000},
+  {label:'垃圾處理費', amt:4200},
+  {label:'影印機', amt:4700},
+  {label:'水電費', amt:30000},
+  {label:'電腦維護費', amt:5000},
+  {label:'勤美(存六信)', amt:0},
+  {label:'營業稅', amt:0},
+  {label:'總監獎金預估', amt:0},
+  {label:'外配獎金預估', amt:0},
+];
+const FC_MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+// 預抓表資料結構:
+// S.forecast2 = {
+//   '2026': {
+//     fixedItems: [{label, amt}],           // 固定支出設定
+//     monthOverrides: { '3': [{label,amt}] }, // 某月的個別覆蓋
+//     openBal: { '1': 0, '2': 0, ... },     // 各月期初餘額
+//     incomeItems: [{id, desc, month, amt, series, note}]
+//   }
+// }
+
+function getFcYear(){ return document.getElementById('fc-year').value; }
+
+function getFcData(){
+  const y = getFcYear();
+  if(!S.forecast2) S.forecast2 = {};
+  if(!S.forecast2[y]) S.forecast2[y] = {
+    fixedItems: FC_DEFAULT_FIXED.map(d=>({...d})),
+    monthOverrides: {},
+    openBal: {},
+    incomeItems: []
+  };
+  return S.forecast2[y];
+}
+
+function initForecast(){ renderFcTable(); renderFcIncomePanel(); }
+
+// ── 主表格渲染 ──
+function renderFcTable(){
+  const d = getFcData();
+  const wrap = document.getElementById('fc-table-wrap');
+
+  // 計算每月數字
+  const months = Array.from({length:12},(_,i)=>i+1);
+  const rows = []; // {label, vals:[12]}
+
+  // 固定支出行
+  const fixedLabels = d.fixedItems.map(f=>f.label);
+  d.fixedItems.forEach(f=>{
+    const vals = months.map(m=>{
+      const ov = d.monthOverrides[String(m)];
+      if(ov){
+        const found = ov.find(x=>x.label===f.label);
+        if(found) return found.amt;
+      }
+      return f.amt;
+    });
+    rows.push({label:f.label, vals, type:'out'});
+  });
+
+  // 收款行（每月彙整）
+  const incomeByMonth = {};
+  months.forEach(m=>{ incomeByMonth[m] = []; });
+  d.incomeItems.forEach(item=>{
+    const m = parseInt(item.month);
+    if(m>=1&&m<=12) incomeByMonth[m].push(item);
+  });
+
+  // 計算每月合計
+  const outTotals = months.map(m=>{
+    return d.fixedItems.reduce((s,f)=>{
+      const ov = d.monthOverrides[String(m)];
+      if(ov){ const found=ov.find(x=>x.label===f.label); if(found) return s+found.amt; }
+      return s+f.amt;
+    },0);
+  });
+  const inTotals = months.map(m=>incomeByMonth[m].reduce((s,x)=>s+x.amt,0));
+
+  // 計算累積餘額（從期初開始滾動）
+  const openBals = months.map(m=>parseFloat(d.openBal[String(m)])||0);
+  // 如果某月有手動填期初，用它；否則用前月結餘
+  const closings = [];
+  let runBal = openBals[0];
+  months.forEach((m,i)=>{
+    if(i>0 && openBals[i]!==0) runBal = openBals[i]; // 手動覆蓋
+    const closing = runBal - outTotals[i] + inTotals[i];
+    closings.push(closing);
+    runBal = closing;
+  });
+
+  // 建表格
+  let html = `<table style="border-collapse:separate;border-spacing:0;font-size:12px;width:max-content;min-width:100%">`;
+
+  // Header
+  html += `<thead><tr>
+    <th style="position:sticky;left:0;z-index:20;background:var(--surface2);padding:7px 12px;font-size:11px;color:var(--text3);text-align:left;border-bottom:2px solid var(--border);border-right:2px solid var(--border);min-width:160px;white-space:nowrap">支出項目</th>`;
+  months.forEach(m=>{
+    const closing = closings[m-1];
+    const danger = closing < 0;
+    const warn = closing < 500000 && closing >= 0;
+    html += `<th style="position:sticky;top:0;z-index:10;background:var(--surface2);padding:7px 8px;font-size:11px;color:var(--text3);text-align:center;border-bottom:2px solid var(--border);border-right:1px solid var(--border);min-width:90px;white-space:nowrap">
+      <div style="font-weight:700;color:var(--text)">${m}月</div>
+      <div style="font-size:10px;color:${danger?'var(--danger)':warn?'var(--warn)':'var(--text3)'};margin-top:2px">${danger?'⚠ ':warn?'△ ':''}${fmtK(closing)}</div>
+    </th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  // 期初餘額行
+  html += `<tr style="background:rgba(200,169,110,.06)">
+    <td style="position:sticky;left:0;z-index:5;background:rgba(200,169,110,.08);padding:5px 12px;border-right:2px solid var(--border);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--accent)">期初餘額</td>`;
+  months.forEach((m,i)=>{
+    const val = openBals[i];
+    html += `<td style="padding:3px 4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+      <input type="number" value="${val||''}" placeholder="—"
+        style="width:82px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;background:transparent;border:none;color:var(--accent)"
+        onchange="setOpenBal(${m},this.value)"
+        onfocus="this.style.outline='1px solid var(--accent)'"
+        onblur="this.style.outline='none'">
+    </td>`;
+  });
+  html += `</tr>`;
+
+  // 支出行
+  d.fixedItems.forEach(f=>{
+    html += `<tr>
+      <td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:5px 12px;border-right:2px solid var(--border);border-bottom:1px solid var(--border);color:var(--text2);white-space:nowrap">${f.label}</td>`;
+    months.forEach(m=>{
+      const ov = d.monthOverrides[String(m)];
+      let val = f.amt;
+      let overridden = false;
+      if(ov){ const found=ov.find(x=>x.label===f.label); if(found){val=found.amt;overridden=true;} }
+      html += `<td style="padding:3px 4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <input type="number" value="${val||''}" placeholder="—"
+          style="width:82px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;background:transparent;border:none;color:${overridden?'var(--warn)':'var(--text)'}"
+          onchange="setMonthOverride(${m},'${f.label}',this.value)"
+          onfocus="this.style.outline='1px solid var(--accent)'"
+          onblur="this.style.outline='none'">
+      </td>`;
+    });
+    html += `</tr>`;
+  });
+
+  // 支出合計行
+  html += `<tr style="background:rgba(224,112,112,.06)">
+    <td style="position:sticky;left:0;z-index:5;background:rgba(224,112,112,.08);padding:6px 12px;border-right:2px solid var(--border);border-bottom:2px solid var(--border);font-weight:700;color:var(--danger);font-size:11px">支出合計</td>`;
+  outTotals.forEach(t=>{
+    html += `<td style="padding:6px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--danger);border-right:1px solid var(--border);border-bottom:2px solid var(--border)">${fmtK(t)}</td>`;
+  });
+  html += `</tr>`;
+
+  // 收款行（按月列出）
+  html += `<tr style="background:var(--surface2)">
+    <td colspan="${13}" style="padding:5px 12px;font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:.06em;border-bottom:1px solid var(--border)">預計收款</td>
+  </tr>`;
+
+  // 找出所有唯一的收款項目，按月顯示
+  const allSeries = [...new Set(d.incomeItems.map(x=>x.series||x.desc).filter(Boolean))];
+  if(d.incomeItems.length === 0){
+    html += `<tr><td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:8px 12px;color:var(--text3);font-size:12px;border-right:2px solid var(--border);border-bottom:1px solid var(--border)">（尚無收款項目）</td>`;
+    months.forEach(()=>{ html += `<td style="border-right:1px solid var(--border);border-bottom:1px solid var(--border)"></td>`; });
+    html += `</tr>`;
+  } else {
+    // 每筆收款顯示一行，月份欄位放金額，其他月空白
+    d.incomeItems.forEach(item=>{
+      html += `<tr>
+        <td style="position:sticky;left:0;z-index:5;background:var(--surface);padding:4px 12px;border-right:2px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="cursor:pointer;color:var(--text3);font-size:11px" onclick="shiftIncome('${item.id}',-1)" title="往前一個月">◀</span>
+            <span style="max-width:120px;overflow:hidden;text-overflow:ellipsis">${item.desc}</span>
+            <span style="cursor:pointer;color:var(--text3);font-size:11px" onclick="shiftIncome('${item.id}',1)" title="往後一個月">▶</span>
+            ${item.series?`<span style="font-size:10px;color:var(--text3)">[${item.series}]</span>`:''}
+            <span style="cursor:pointer;color:var(--text3);font-size:10px;margin-left:4px" onclick="deleteIncome('${item.id}')">✕</span>
+          </div>
+          ${item.note?`<div style="font-size:10px;color:var(--text3)">${item.note}</div>`:''}
+        </td>`;
+      months.forEach(m=>{
+        const active = parseInt(item.month)===m;
+        html += `<td style="padding:4px 6px;text-align:right;border-right:1px solid var(--border);border-bottom:1px solid var(--border);${active?'background:rgba(126,184,164,.1)':''}">
+          ${active?`<span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2);font-weight:500">${fmtK(item.amt)}</span>`:''}
+        </td>`;
+      });
+      html += `</tr>`;
+    });
+  }
+
+  // 收款合計行
+  html += `<tr style="background:rgba(126,184,164,.06)">
+    <td style="position:sticky;left:0;z-index:5;background:rgba(126,184,164,.08);padding:6px 12px;border-right:2px solid var(--border);border-bottom:2px solid var(--border);font-weight:700;color:var(--accent2);font-size:11px">收款合計</td>`;
+  inTotals.forEach(t=>{
+    html += `<td style="padding:6px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);border-right:1px solid var(--border);border-bottom:2px solid var(--border)">${t?fmtK(t):'—'}</td>`;
+  });
+  html += `</tr>`;
+
+  // 結餘行
+  html += `<tr style="background:rgba(200,169,110,.06)">
+    <td style="position:sticky;left:0;z-index:5;background:rgba(200,169,110,.1);padding:7px 12px;border-right:2px solid var(--border);font-weight:700;color:var(--accent);font-size:12px">預估結餘</td>`;
+  closings.forEach(c=>{
+    const col = c<0?'var(--danger)':c<500000?'var(--warn)':'var(--accent2)';
+    html += `<td style="padding:7px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${col};border-right:1px solid var(--border)">${fmtK(c)}</td>`;
+  });
+  html += `</tr>`;
+
+  html += `</tbody></table>`;
+  wrap.innerHTML = html;
+}
+
+// ── 收款面板（詳細列表）──
+function renderFcIncomePanel(){
+  const d = getFcData();
+  const panel = document.getElementById('fc-income-panel');
+  if(!d.incomeItems.length){ panel.innerHTML=''; return; }
+
+  // 按月分組
+  const byMonth = {};
+  for(let m=1;m<=12;m++) byMonth[m]=[];
+  d.incomeItems.forEach(item=>{ const m=parseInt(item.month); if(m>=1&&m<=12) byMonth[m].push(item); });
+
+  let html = `<div class="card"><div class="card-title">收款明細（按月）</div>`;
+  for(let m=1;m<=12;m++){
+    if(!byMonth[m].length) continue;
+    const total = byMonth[m].reduce((s,x)=>s+x.amt,0);
+    html += `<div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:6px">${m}月　<span style="font-family:'DM Mono',monospace">${fmtK(total)}</span></div>`;
+    byMonth[m].forEach(item=>{
+      html += `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:11px;cursor:pointer;color:var(--text3)" onclick="shiftIncome('${item.id}',-1)" title="上移一月">◀</span>
+        <span style="flex:1;font-size:13px">${item.desc}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent2)">${fmtK(item.amt)}</span>
+        ${item.series?`<span class="tag" style="font-size:10px">${item.series}</span>`:''}
+        <span style="font-size:11px;cursor:pointer;color:var(--text3)" onclick="shiftIncome('${item.id}',1)" title="下移一月">▶</span>
+        <span style="font-size:11px;cursor:pointer;color:var(--text3)" onclick="shiftSeriesFrom('${item.series||''}','${item.id}',1)" title="此筆及後續同系列全部延後一月" style="color:var(--warn)">▶▶</span>
+        <span style="cursor:pointer;color:var(--danger);font-size:12px" onclick="deleteIncome('${item.id}')">✕</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+  panel.innerHTML = html;
+}
+
+// ── 操作函式 ──
+function setOpenBal(month, val){
+  const d = getFcData();
+  if(!d.openBal) d.openBal={};
+  d.openBal[String(month)] = parseFloat(val)||0;
+  persist(); renderFcTable();
+}
+
+function setMonthOverride(month, label, val){
+  const d = getFcData();
+  if(!d.monthOverrides) d.monthOverrides={};
+  if(!d.monthOverrides[String(month)]) d.monthOverrides[String(month)]=[];
+  const arr = d.monthOverrides[String(month)];
+  const idx = arr.findIndex(x=>x.label===label);
+  const amt = parseFloat(val)||0;
+  // if same as default, remove override
+  const def = d.fixedItems.find(x=>x.label===label);
+  if(def && def.amt===amt){
+    if(idx>=0) arr.splice(idx,1);
+  } else {
+    if(idx>=0) arr[idx].amt=amt;
+    else arr.push({label,amt});
+  }
+  persist(); renderFcTable();
+}
+
+function openAddIncome(){
+  document.getElementById('modal-fc-income').classList.add('open');
+}
+
+function addIncomeItem(){
+  const desc = document.getElementById('fi-desc').value.trim();
+  if(!desc){ toast('請填寫案名'); return; }
+  const d = getFcData();
+  d.incomeItems.push({
+    id: 'i'+Date.now(),
+    desc,
+    month: parseInt(document.getElementById('fi-month').value),
+    amt: parseFloat(document.getElementById('fi-amt').value)||0,
+    series: document.getElementById('fi-series').value.trim(),
+    note: document.getElementById('fi-note').value.trim(),
+  });
+  // sort by month
+  d.incomeItems.sort((a,b)=>a.month-b.month);
+  persist();
+  closeModal('modal-fc-income');
+  document.getElementById('fi-desc').value='';
+  document.getElementById('fi-amt').value='';
+  document.getElementById('fi-series').value='';
+  document.getElementById('fi-note').value='';
+  renderFcTable();
+  renderFcIncomePanel();
+  toast('已新增');
+}
+
+function shiftIncome(id, delta){
+  const d = getFcData();
+  const item = d.incomeItems.find(x=>x.id===id);
+  if(!item) return;
+  const newM = Math.max(1,Math.min(12, parseInt(item.month)+delta));
+  item.month = newM;
+  d.incomeItems.sort((a,b)=>a.month-b.month);
+  persist(); renderFcTable(); renderFcIncomePanel();
+}
+
+// 整批移動：同系列中，此筆及後面的所有項目往後delta個月
+function shiftSeriesFrom(series, fromId, delta){
+  if(!series){ shiftIncome(fromId, delta); return; }
+  const d = getFcData();
+  const fromItem = d.incomeItems.find(x=>x.id===fromId);
+  if(!fromItem) return;
+  const fromMonth = parseInt(fromItem.month);
+  d.incomeItems.forEach(item=>{
+    if((item.series||item.desc)===series && parseInt(item.month)>=fromMonth){
+      item.month = Math.max(1, Math.min(12, parseInt(item.month)+delta));
+    }
+  });
+  d.incomeItems.sort((a,b)=>a.month-b.month);
+  persist(); renderFcTable(); renderFcIncomePanel();
+  toast(`${series} 此筆及後續已延後${delta}個月`);
+}
+
+function deleteIncome(id){
+  const d = getFcData();
+  d.incomeItems = d.incomeItems.filter(x=>x.id!==id);
+  persist(); renderFcTable(); renderFcIncomePanel();
+}
+
+function openFcSettings(){
+  const d = getFcData();
+  const wrap = document.getElementById('fc-settings-rows');
+  wrap.innerHTML = '';
+  d.fixedItems.forEach((f,i)=>{
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)';
+    row.innerHTML=`
+      <span style="flex:1;font-size:13px;color:var(--text2)">${f.label}</span>
+      <input type="number" value="${f.amt||''}" placeholder="0"
+        style="width:110px;text-align:right;font-family:'DM Mono',monospace;font-size:13px"
+        onchange="getFcData().fixedItems[${i}].amt=parseFloat(this.value)||0">
+      <span style="cursor:pointer;color:var(--text3);font-size:12px" onclick="getFcData().fixedItems.splice(${i},1);openFcSettings()">✕</span>`;
+    wrap.appendChild(row);
+  });
+  document.getElementById('modal-fc-settings').classList.add('open');
+}
+
+function addFixedItem(){
+  const label = document.getElementById('fc-new-fixed-label').value.trim();
+  const amt = parseFloat(document.getElementById('fc-new-fixed-amt').value)||0;
+  if(!label) return;
+  getFcData().fixedItems.push({label,amt});
+  document.getElementById('fc-new-fixed-label').value='';
+  document.getElementById('fc-new-fixed-amt').value='';
+  openFcSettings();
+}
+
+function saveFixedSettings(){
+  persist();
+  closeModal('modal-fc-settings');
+  renderFcTable();
+  toast('固定支出已儲存');
+}
+
+function saveForecast(){ persist(); toast('預抓表已儲存'); }
+
+function fmtK(n){
+  const abs = Math.abs(Math.round(n));
+  const sign = n<0?'-':'';
+  if(abs>=10000) return sign+(abs/10000).toFixed(1)+'萬';
+  return sign+abs.toLocaleString('zh-TW');
+}
+
+
+// STAFF OVERVIEW
+// ══════════════════════════════════════
+function renderStaffOverview(){
+  const wrap=document.getElementById('staff-overview');
+  if(!S.projects.length){wrap.innerHTML='<div class="empty">尚無個案資料</div>';return;}
+  const totals={};
+  S.projects.forEach(p=>(p.allocs||[]).forEach(a=>{
+    if(!totals[a.name]) totals[a.name]={earn:0,role:a.role};
+    totals[a.name].earn+=a.earn;
+  }));
+  const maxVal=Math.max(...Object.values(totals).map(t=>t.earn),1);
+  wrap.innerHTML='';
+  Object.entries(totals).sort((a,b)=>b[1].earn-a[1].earn).forEach(([name,t])=>{
+    const pct=Math.round(t.earn/maxVal*100);
+    const staffInfo=S.staff.find(s=>s.name===name);
+    const salary=staffInfo?staffInfo.salary:null;
+    const div=document.createElement('div');
+    div.className='staff-card';
+    div.innerHTML=`
+      <div style="min-width:70px"><div style="font-size:14px;font-weight:500">${name}</div><div style="font-size:11px;color:var(--text3)">${t.role}</div></div>
+      <div style="flex:1"><div style="font-size:11px;color:var(--text3)">${S.projects.length} 個案累計</div><div class="staff-bar"><div class="staff-bar-fill" style="width:${pct}%"></div></div></div>
+      <div style="text-align:right;min-width:90px">
+        <div class="mono" style="font-size:17px;color:var(--accent)">$${fmt(t.earn)}</div>
+        ${salary?`<div style="font-size:11px;color:var(--text3)">月薪 $${fmt(salary)}</div>`:''}
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════
+function renderStaffSettings(){
+  const wrap=document.getElementById('staff-list-set');
+  wrap.innerHTML='';
+  S.staff.forEach(s=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)';
+    row.innerHTML=`<div><span style="font-weight:500">${s.name}</span> <span class="tag" style="margin-left:6px">${s.role}</span> <span style="font-size:12px;color:var(--text3);margin-left:8px">月薪 $${fmt(s.salary)}</span></div><button class="btn btn-danger btn-sm" onclick="removeStaff('${s.id}')">移除</button>`;
+    wrap.appendChild(row);
+  });
+}
+
+function addStaff(){
+  const name=document.getElementById('ns-name').value.trim();
+  if(!name){toast('請填寫姓名');return;}
+  S.staff.push({id:'s'+Date.now(),name,role:document.getElementById('ns-role').value,salary:parseFloat(document.getElementById('ns-salary').value)||0});
+  persist(); renderStaffSettings(); renderStaffChips();
+  document.getElementById('ns-name').value='';
+  document.getElementById('ns-salary').value='';
+  toast('已新增 '+name);
+}
+
+function removeStaff(id){
+  S.staff=S.staff.filter(s=>s.id!==id);
+  persist(); renderStaffSettings(); renderStaffChips();
+}
+
+function saveSettings(){
+  S.settings.defA=parseFloat(document.getElementById('def-a').value)||35;
+  S.settings.defC=parseFloat(document.getElementById('def-c').value)||20;
+  persist(); toast('設定已儲存');
+}
+
+// ══════════════════════════════════════
+// MODAL / UTILS
+// ══════════════════════════════════════
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  let _mdt=null;
+  bg.addEventListener('mousedown',e=>{ _mdt=e.target; });
+  bg.addEventListener('click',e=>{
+    if(e.target===bg && _mdt===bg) bg.classList.remove('open');
+  });
+});
+
+function fmt(n){return Math.round(n).toLocaleString('zh-TW');}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='探索管理系統_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+}
+function importData(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{Object.assign(S,JSON.parse(ev.target.result));persist();location.reload();}
+    catch{toast('匯入失敗，格式錯誤');}
+  };
+  reader.readAsText(file);
+}
+function clearAll(){
+  if(!confirm('確認清除所有資料？')) return;
+  localStorage.removeItem('tanso_mgr'); try{sheetsClear('主資料!A1:A100');}catch(e){}
+  location.reload();
+}
+
+// ══════════════════════════════════════
+// 舊制獎金 JS — A/B/C 三區塊
+// ══════════════════════════════════════
+let bonusMode = 'legacy';
+let _lbCaseId = null;
+let _lbContractPhaseRef = null;
+let _lbB = []; // B帳：總監＋外配
+let _lbC = []; // C帳：同事獎金
+
+function switchBonusMode(mode) {
+  bonusMode = mode;
+  document.getElementById('tab-new-bonus').classList.toggle('active', mode==='new');
+  document.getElementById('tab-legacy-bonus').classList.toggle('active', mode==='legacy');
+  const legacyPanel = document.getElementById('legacy-bonus-panel');
+  const newPanel = document.getElementById('new-bonus-panel');
+  if(legacyPanel) legacyPanel.style.display = mode==='legacy'?'block':'none';
+  if(newPanel) newPanel.style.display = mode==='new'?'block':'none';
+  if(mode==='legacy') { renderLegacyCases(); refreshContractSelect(); }
+  if(mode==='new') { renderNewCases(); refreshContractSelect(); }
+}
+
+const LB_B_ROLES = ['總監','執行總監','文案','企劃','AE','設計'];
+const LB_C_ROLES = ['主責設計','設計助理','PM/AE','文案企劃'];
+
+function _lbDefaultB() {
+  return [
+    {role:'總監',   name:'Sim',   pct:0, amt:0},
+    {role:'總監',   name:'Julia', pct:0, amt:0},
+    {role:'總監',   name:'How',   pct:0, amt:0},
+    {role:'外配設計', name:'',   pct:0, amt:0},
+  ];
+}
+function _lbDefaultC() {
+  return [
+    {role:'主責設計', name:'', pct:0, amt:0},
+    {role:'PM/AE',   name:'', pct:0, amt:0},
+  ];
+}
+
+// 從上一期複製人員名單（保留姓名、角色、%，清空金額）
+function _lbFromLastPhase(c) {
+  if(!c.phases.length) return;
+  const last = c.phases[c.phases.length-1];
+  _lbB = (last.bPersons||[]).map(p=>({...p, amt:0}));
+  _lbC = (last.cPersons||[]).map(p=>({...p, amt:0}));
+  // 帶入上期公司比例
+  document.getElementById('lb-co-pct').value = last.coPct||50;
+}
+
+function initLegacyCase() {
+  const client = document.getElementById('lb-client').value.trim();
+  if(!client){toast('請填寫客戶名稱');return;}
+  if(!S.legacyCases) S.legacyCases=[];
+  let c = S.legacyCases.find(x=>x.client===client);
+  if(!c){
+    c={id:'lc'+Date.now(), client,
+       period: document.getElementById('lb-contract-period').value,
+       total:  parseFloat(document.getElementById('lb-contract-total').value)||0,
+       phases:[]};
+    S.legacyCases.push(c);
+  }
+  _openLbModal(c);
+}
+
+function _openLbModal(c) {
+  _lbCaseId = c.id;
+  // 找上一期有內容的期次，複製人員和比例
+  const lastPhase = [...(c.phases||[])].reverse().find(p=>
+    (p.bPersons&&p.bPersons.length) || (p.cPersons&&p.cPersons.length)
+  );
+  if(lastPhase) {
+    // 複製上一期人員和比例，清空金額
+    _lbB = (lastPhase.bPersons||[]).map(p=>({...p, amt:0}));
+    _lbC = (lastPhase.cPersons||[]).map(p=>({...p, amt:0}));
+    document.getElementById('lb-co-pct').value = lastPhase.coPct||50;
+    // 確保 Julia 和 Sim 一定在 B帳
+    if(!_lbB.find(p=>p.name==='Julia')) _lbB.unshift({role:'總監', name:'Julia', pct:0, amt:0});
+    if(!_lbB.find(p=>p.name==='Sim'))   _lbB.unshift({role:'總監', name:'Sim',   pct:0, amt:0});
+  } else {
+    // 全新案子，預設 Sim + Julia
+    _lbB = [
+      {role:'總監', name:'Sim',   pct:0, amt:0},
+      {role:'總監', name:'Julia', pct:0, amt:0},
+    ];
+    _lbC = [];
+    document.getElementById('lb-co-pct').value = '50';
+  }
+  document.getElementById('lb-case-title').textContent = c.client;
+  document.getElementById('lb-period').value = '';
+  document.getElementById('lb-gross').value = '';
+  document.getElementById('lb-gross-tax').value = '';
+  _lbContractPhaseRef = null;
+  renderLbBRows(); renderLbCRows(); lbCalc();
+  const btn2 = document.getElementById('lb-save-btn');
+  if(btn2) btn2.textContent = '新增此期次';
+  document.getElementById('modal-legacy-bonus').classList.add('open');
+}
+
+// ── B帳列（總監）：下拉角色＋%即時算金額 ──
+// ── 取得執行額（扣稅後再扣A帳）──
+function lbExecAmt() {
+  // gross = 未稅金額（請款追蹤填的是未稅）
+  const gross = parseFloat(document.getElementById('lb-gross').value)||0;
+  const taxAmt = Math.round(gross * 0.05);   // 稅金 = 未稅 × 5%，歸A帳
+  const coPct = parseFloat(document.getElementById('lb-co-pct').value)||50;
+  const aBase = Math.round(gross * coPct / 100); // A帳比例從未稅金額抽
+  const aAmt  = taxAmt + aBase;                  // A帳 = 稅 + A帳比例
+  const execAmt = gross - aBase;                 // 執行額 = 未稅 - A帳比例（稅已歸A，不從執行額扣）
+  return { gross, taxAmt, aBase, aAmt, execAmt, netAfterTax: gross };
+}
+
+function renderLbBRows() {
+  const { execAmt } = lbExecAmt();
+  const wrap = document.getElementById('lb-b-rows');
+  if(!wrap) return;
+  wrap.innerHTML = _lbB.map((p,i)=>{
+    const calcAmt = p.pct ? Math.round(execAmt * p.pct / 100) : p.amt;
+    _lbB[i].amt = calcAmt;
+    const calcPct = execAmt>0 ? (calcAmt/execAmt*100).toFixed(1) : (p.pct||'');
+    const opts = LB_B_ROLES.map(r=>`<option value="${r}"${r===p.role?'selected':''}>${r}</option>`).join('');
+    return `
+    <div style="display:grid;grid-template-columns:110px 90px 55px 90px 28px;gap:6px;margin-bottom:5px;align-items:center">
+      <select style="font-size:11px;padding:4px 6px" onchange="_lbB[${i}].role=this.value">${opts}</select>
+      <select style="font-size:11px;padding:4px 6px" onchange="_lbB[${i}].name=this.value">
+        <option value="">— 選擇 —</option>
+        <optgroup label="總監">
+        ${['Sim','Julia','How'].map(n=>`<option value="${n}" ${n===p.name?'selected':''}>${n}</option>`).join('')}
+        </optgroup>
+        <optgroup label="外配">
+        ${['怪獸','思儀','美玲','舒瑜','雁子','玫佳'].map(n=>`<option value="${n}" ${n===p.name?'selected':''}>${n}</option>`).join('')}
+        </optgroup>
+      </select>
+      <input type="number" id="lb-b-pct-${i}" value="${p.pct||''}" placeholder="%"
+        style="text-align:right;font-size:12px;padding:4px 6px"
+        oninput="_lbB[${i}].pct=parseFloat(this.value)||0;_lbB[${i}].amt=0;lbCalcOnly()">
+      <input type="number" id="lb-b-amt-${i}" value="${calcAmt||''}" placeholder="金額"
+        style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;padding:4px 6px;background:rgba(200,169,110,.08);border:1px solid var(--border);border-radius:4px;color:var(--accent)"
+        oninput="_lbB[${i}].amt=parseFloat(this.value)||0;_lbB[${i}].pct=0;lbSyncPct('b',${i})">
+      <span style="cursor:pointer;color:var(--text3);text-align:center"
+        onclick="_lbB.splice(${i},1);lbCalc()">✕</span>
+    </div>`;
+  }).join('');
+}
+
+function renderLbCRows() {
+  const { execAmt } = lbExecAmt();
+  const wrap = document.getElementById('lb-c-rows');
+  if(!wrap) return;
+  wrap.innerHTML = _lbC.map((p,i)=>{
+    const calcAmt = p.pct ? Math.round(execAmt * p.pct / 100) : p.amt;
+    _lbC[i].amt = calcAmt;
+    const opts = LB_C_ROLES.map(r=>`<option value="${r}"${r===p.role?'selected':''}>${r}</option>`).join('');
+    return `
+    <div style="display:grid;grid-template-columns:110px 90px 55px 90px 28px;gap:6px;margin-bottom:5px;align-items:center">
+      <select style="font-size:11px;padding:4px 6px" onchange="_lbC[${i}].role=this.value">${opts}</select>
+      <select style="font-size:11px;padding:4px 6px" onchange="_lbC[${i}].name=this.value">
+        <option value="">— 選擇 —</option>
+        ${['靜儒','JuJu','巧毓','慈欣','粘','巧如','葉蓁','宣嶧'].map(n=>`<option value="${n}" ${n===p.name?'selected':''}>${n}</option>`).join('')}
+      </select>
+      <input type="number" id="lb-c-pct-${i}" value="${p.pct||''}" placeholder="%"
+        style="text-align:right;font-size:12px;padding:4px 6px"
+        oninput="_lbC[${i}].pct=parseFloat(this.value)||0;_lbC[${i}].amt=0;lbCalcOnly()">
+      <input type="number" id="lb-c-amt-${i}" value="${calcAmt||''}" placeholder="金額"
+        style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;padding:4px 6px;background:rgba(168,123,191,.08);border:1px solid var(--border);border-radius:4px;color:var(--accent3)"
+        oninput="_lbC[${i}].amt=parseFloat(this.value)||0;_lbC[${i}].pct=0;lbSyncPct('c',${i})">
+      <span style="cursor:pointer;color:var(--text3);text-align:center"
+        onclick="_lbC.splice(${i},1);lbCalc()">✕</span>
+    </div>`;
+  }).join('');
+}
+
+// 填金額後反算%（不重繪列）
+function lbSyncPct(which, i) {
+  const { execAmt } = lbExecAmt();
+  if(execAmt<=0) return;
+  if(which==='b') {
+    const pct = _lbB[i].amt/execAmt*100;
+    _lbB[i].pct = Math.round(pct*10)/10;
+    const el = document.getElementById('lb-b-pct-'+i);
+    if(el) el.value = _lbB[i].pct;
+  } else {
+    const pct = _lbC[i].amt/execAmt*100;
+    _lbC[i].pct = Math.round(pct*10)/10;
+    const el = document.getElementById('lb-c-pct-'+i);
+    if(el) el.value = _lbC[i].pct;
+  }
+  lbCalcSummary();
+}
+
+// 安靜版：只更新金額和%的 input value（不重繪整列）
+function _renderLbBRowsQuiet() {
+  const { execAmt } = lbExecAmt();
+  _lbB.forEach((p,i)=>{
+    const amtEl = document.getElementById('lb-b-amt-'+i);
+    const pctEl = document.getElementById('lb-b-pct-'+i);
+    if(amtEl && document.activeElement!==amtEl) amtEl.value = p.amt||'';
+    if(pctEl && document.activeElement!==pctEl) pctEl.value = p.pct||'';
+  });
+}
+function _renderLbCRowsQuiet() {
+  const { execAmt } = lbExecAmt();
+  _lbC.forEach((p,i)=>{
+    const amtEl = document.getElementById('lb-c-amt-'+i);
+    const pctEl = document.getElementById('lb-c-pct-'+i);
+    if(amtEl && document.activeElement!==amtEl) amtEl.value = p.amt||'';
+    if(pctEl && document.activeElement!==pctEl) pctEl.value = p.pct||'';
+  });
+}
+function addLbBRow() { _lbB.push({role:'執行總監',name:'',pct:0,amt:0}); lbCalc(); }
+function addLbCRow() { _lbC.push({role:'主責設計',name:'',pct:0,amt:0}); lbCalc(); }
+
+// ── lbCalcOnly：使用者改%時呼叫，只更新金額 input，不重繪列 ──
+function lbCalcOnly() {
+  const { execAmt } = lbExecAmt();
+  _lbB.forEach((p,i)=>{
+    if(p.pct){ p.amt=Math.round(execAmt*p.pct/100); }
+    const el=document.getElementById('lb-b-amt-'+i);
+    if(el && document.activeElement!==el) el.value=p.amt||'';
+  });
+  _lbC.forEach((p,i)=>{
+    if(p.pct){ p.amt=Math.round(execAmt*p.pct/100); }
+    const el=document.getElementById('lb-c-amt-'+i);
+    if(el && document.activeElement!==el) el.value=p.amt||'';
+  });
+  lbCalcSummary();
+}
+
+// ── lbCalcSummary：只更新底部總覽 ──
+function lbCalcSummary() {
+  const { gross, taxAmt, netAfterTax, aBase, execAmt } = lbExecAmt();
+  const aAmt = taxAmt + aBase;                // A帳 = 稅 + A帳比例
+  const bAmt = _lbB.reduce((s,p)=>s+p.amt,0);
+  const cAmt = _lbC.reduce((s,p)=>s+p.amt,0);
+  const aNet = aAmt - cAmt;
+  const bRemain = execAmt - bAmt;
+
+  const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent=val; };
+  const taxedGross = gross + taxAmt; // 含稅總金額
+  set('lb-a-amt', '$'+fmt(aAmt)+' (稅$'+fmt(taxAmt)+')');
+  set('lb-a-net', '$'+fmt(aNet));
+  set('lb-b-alloc', '$'+fmt(bAmt));
+  set('lb-exec-amt', '$'+fmt(execAmt));
+  set('lb-c-alloc', '$'+fmt(cAmt));
+  set('lb-sum-a', '$'+fmt(aAmt));
+  set('lb-sum-a-net', '$'+fmt(aNet));
+  set('lb-sum-b', '$'+fmt(bAmt));
+  set('lb-sum-c', '$'+fmt(cAmt));
+  set('lb-sum-gross', '$'+fmt(gross));
+
+  const bDiffEl = document.getElementById('lb-sum-diff');
+  if(bDiffEl){
+    bDiffEl.textContent = (bRemain>=0?'+':'')+fmt(bRemain);
+    bDiffEl.style.color = Math.abs(bRemain)<100?'var(--accent2)':bRemain<0?'var(--danger)':'var(--text)';
+  }
+  const aRemainEl = document.getElementById('lb-sum-a-remain');
+  if(aRemainEl){
+    aRemainEl.textContent = (aNet>=0?'+':'')+fmt(aNet);
+    aRemainEl.style.color = aNet<0?'var(--danger)':'var(--accent2)';
+  }
+}
+
+// ── lbCalc：金額/比例/公司%改變時的完整重算（重繪列）──
+function lbCalc() {
+  const gross = parseFloat(document.getElementById('lb-gross').value)||0;
+  // 含稅入帳自動填
+  const taxEl = document.getElementById('lb-gross-tax');
+  if(taxEl && !taxEl.value && gross) taxEl.value = Math.round(gross*1.05);
+
+  const { execAmt } = lbExecAmt();
+  _lbB.forEach(p=>{ if(p.pct) p.amt=Math.round(execAmt*p.pct/100); });
+  _lbC.forEach(p=>{ if(p.pct) p.amt=Math.round(execAmt*p.pct/100); });
+  renderLbBRows(); renderLbCRows();
+  lbCalcSummary();
+}
+
+let _lbEditPhaseId = null;
+
+function saveLbPhase() {
+  try {
+  const gross = parseFloat((document.getElementById('lb-gross')||{}).value)||0;
+  if(!gross){ toast('請填寫金額'); return; }
+  const isEdit = !!_lbEditPhaseId;
+
+  // 找案子：優先用 _lbCaseId，找不到就從 client 欄找
+  let c = null;
+  if(_lbCaseId && S.legacyCases) c = S.legacyCases.find(x=>x.id===_lbCaseId);
+  if(!c){
+    const clientVal = (document.getElementById('lb-client')||{}).value||'';
+    if(clientVal && S.legacyCases) c = S.legacyCases.find(x=>x.client===clientVal);
+  }
+  if(!c){
+    // 自動建立
+    const clientVal = (document.getElementById('lb-client')||{}).value||'未命名';
+    if(!S.legacyCases) S.legacyCases=[];
+    c = {id:'lc'+Date.now(), client:clientVal, period:'', total:0, phases:[]};
+    S.legacyCases.push(c);
+    _lbCaseId = c.id;
+  }
+
+  const period = ((document.getElementById('lb-period')||{}).value||'').trim() || ('第'+(c.phases.length+1)+'期');
+  const coPct = parseFloat((document.getElementById('lb-co-pct')||{}).value)||50;
+  const taxAmt = Math.round(gross*0.05);
+  const aAmt = taxAmt + Math.round(gross*coPct/100);
+  const grossTax = parseFloat((document.getElementById('lb-gross-tax')||{}).value)||Math.round(gross*1.05);
+  const cAmt = (_lbC||[]).reduce((s,p)=>s+(p.amt||0),0);
+
+  const phaseData = {
+    period, gross, grossTax, coPct, aAmt, aNet: aAmt-cAmt,
+    bPersons: (_lbB||[]).filter(p=>p.name||p.amt>0).map(p=>({...p})),
+    cPersons: (_lbC||[]).filter(p=>p.name||p.amt>0).map(p=>({...p})),
+    contractPhaseRef: _lbContractPhaseRef||null,
+  };
+
+  if(_lbEditPhaseId) {
+    const idx = c.phases.findIndex(p=>p.id===_lbEditPhaseId);
+    if(idx>=0) c.phases[idx] = Object.assign({}, c.phases[idx], phaseData);
+    _lbEditPhaseId = null;
+  } else {
+    c.phases.push(Object.assign({id:'lp'+Date.now(), createdAt:new Date().toISOString()}, phaseData));
+  }
+
+  persist();
+  closeModal('modal-legacy-bonus');
+  renderLegacyCases();
+  toast(isEdit ? '✓ 已更新' : '✓ 已新增');
+  } catch(err) { alert('錯誤：'+err.message); }
+}
+
+
+function editLbPhase(cid, phaseId) {
+  const c = S.legacyCases.find(x=>x.id===cid);
+  const p = c?.phases.find(x=>x.id===phaseId);
+  if(!c||!p) return;
+  _lbCaseId = cid;
+  _lbEditPhaseId = phaseId;
+
+  if(p.bPersons&&p.bPersons.length) {
+    // 該期已有人員，直接帶入
+    _lbB = (p.bPersons||[]).map(x=>({...x}));
+    _lbC = (p.cPersons||[]).map(x=>({...x}));
+  } else {
+    // 該期沒有人員，從上一期複製
+    const phaseIdx = c.phases.findIndex(x=>x.id===phaseId);
+    const prev = c.phases.slice(0, phaseIdx).reverse().find(x=>x.bPersons&&x.bPersons.length);
+    if(prev) {
+      _lbB = prev.bPersons.map(x=>({...x, amt:0}));
+      _lbC = prev.cPersons.map(x=>({...x, amt:0}));
+    } else {
+      _lbB = [{role:'總監',name:'Sim',pct:0,amt:0},{role:'總監',name:'Julia',pct:0,amt:0}];
+      _lbC = [];
+    }
+  }
+  // 確保 Julia 和 Sim 一定在
+  if(!_lbB.find(p=>p.name==='Julia')) _lbB.unshift({role:'總監',name:'Julia',pct:0,amt:0});
+  if(!_lbB.find(p=>p.name==='Sim'))   _lbB.unshift({role:'總監',name:'Sim',  pct:0,amt:0});
+  document.getElementById('lb-case-title').textContent = c.client;
+  document.getElementById('lb-period').value = p.period;
+  document.getElementById('lb-gross').value = p.gross;
+  document.getElementById('lb-gross-tax').value = p.grossTax||'';
+  document.getElementById('lb-co-pct').value = p.coPct||50;
+  renderLbBRows(); renderLbCRows(); lbCalc();
+  const btn = document.getElementById('lb-save-btn');
+  if(btn) btn.textContent = '儲存修改';
+  document.getElementById('modal-legacy-bonus').classList.add('open');
+}
+
+function renderLegacyCases() {
+  const wrap = document.getElementById('legacy-cases-wrap');
+  if(!S.legacyCases||!S.legacyCases.length){
+    wrap.innerHTML='<div class="empty">尚無舊制案子</div>';
+    return;
+  }
+  wrap.innerHTML='';
+
+  S.legacyCases.forEach(c=>{
+    const totalGross = c.phases.reduce((s,p)=>s+p.gross,0);
+    const cIdx = S.legacyCases.indexOf(c)+1;
+    const lcCollapsed = (S.lcCollapsed||{})[c.id];
+
+    // 收集人員欄
+    const bNames=[], cNames=[];
+    c.phases.forEach(p=>{
+      (p.bPersons||[]).forEach(x=>{ if(x.name&&x.amt>0&&!bNames.find(n=>n.name===x.name&&n.role===x.role)) bNames.push({name:x.name,role:x.role}); });
+      (p.cPersons||[]).forEach(x=>{ if(x.name&&x.amt>0&&!cNames.find(n=>n.name===x.name&&n.role===x.role)) cNames.push({name:x.name,role:x.role}); });
+    });
+
+    const b = 'border:1px solid var(--border)';
+    const m = "font-family:'DM Mono',monospace";
+    const td = (val,extra='') => `<td style="padding:6px 10px;${b};text-align:right;${m};font-size:12px;${extra}">${val}</td>`;
+
+    // 計算每人的%（取有填金額的期次平均）
+    const personPct = (arr, name, role) => {
+      const phases = c.phases.filter(p=>(arr==='b'?p.bPersons:p.cPersons||[]).find(x=>x.name===name&&x.role===role&&x.amt>0));
+      if(!phases.length) return '';
+      const pcts = phases.map(p=>{
+        const f=(arr==='b'?p.bPersons:p.cPersons).find(x=>x.name===name&&x.role===role);
+        return f?.pct||0;
+      });
+      const avg = Math.round(pcts.reduce((s,v)=>s+v,0)/pcts.length*10)/10;
+      return avg>0?avg+'%':'';
+    };
+
+    // 表頭：姓名 + % + 職稱（對照左圖 Excel 格式）
+    let thead = `<tr style="background:var(--surface2)">
+      <th style="padding:6px 10px;text-align:left;${b};font-size:11px;color:var(--text3);min-width:80px">期數</th>
+      <th style="padding:6px 10px;text-align:right;${b};font-size:11px;color:var(--text3)">金額</th>
+      <th style="padding:6px 10px;text-align:right;${b};font-size:11px;color:var(--accent2)">A帳<br><span style="font-weight:300;font-size:10px">公司</span></th>
+      <th style="padding:6px 10px;text-align:right;${b};font-size:11px;color:var(--accent)">執行<br><span style="font-weight:300;font-size:10px">B+C</span></th>
+      ${bNames.map(p=>{
+        const pct=personPct('b',p.name,p.role);
+        return `<th style="padding:6px 10px;text-align:right;${b};font-size:11px;color:var(--accent)">
+          ${p.name}${pct?` <span style="color:var(--text3);font-size:10px">${pct}</span>`:''}
+          <br><span style="font-weight:300;font-size:10px;color:var(--text3)">${p.role}</span>
+        </th>`;
+      }).join('')}
+      ${bNames.length&&cNames.length?`<th style="width:4px;${b};background:var(--surface2)"></th>`:''}
+      ${cNames.map(p=>{
+        const pct=personPct('c',p.name,p.role);
+        return `<th style="padding:6px 10px;text-align:right;${b};font-size:11px;color:var(--accent3)">
+          ${p.name}${pct?` <span style="color:var(--text3);font-size:10px">${pct}</span>`:''}
+          <br><span style="font-weight:300;font-size:10px;color:var(--text3)">${p.role}</span>
+        </th>`;
+      }).join('')}
+      <th style="width:60px;${b};background:var(--surface2)"></th>
+    </tr>`;
+
+    // 每期一行（純顯示）
+    let tbody = c.phases.map((p,pi)=>{
+      const coPct=p.coPct||50;
+      const taxAmt=Math.round(p.gross*.05);  // 未稅×5%
+      const aBase=Math.round(p.gross*coPct/100);
+      const aAmt=taxAmt+aBase;               // A帳=稅+比例
+      const execAmt=p.gross-aBase;           // 執行=未稅-比例
+      const cpRef=p.contractPhaseRef?.split('|');
+      const cpData=cpRef?((S.contracts||[]).find(x=>x.id===cpRef[0])?.phases||[])[+cpRef[1]]:null;
+      const bg=pi%2===0?'':'background:rgba(255,255,255,.02)';
+
+      const bCells=bNames.map(bn=>{
+        const f=(p.bPersons||[]).find(x=>x.name===bn.name&&x.role===bn.role);
+        const amt=f?f.amt:0;
+        return td(amt?fmt(amt):'—','color:'+(amt?'var(--accent)':'var(--text3)'));
+      }).join('');
+      const cCells=cNames.map(cn=>{
+        const f=(p.cPersons||[]).find(x=>x.name===cn.name&&x.role===cn.role);
+        const amt=f?f.amt:0;
+        return td(amt?fmt(amt):'—','color:'+(amt?'var(--accent3)':'var(--text3)'));
+      }).join('');
+
+      return `<tr style="${bg}">
+        <td style="padding:6px 10px;${b};font-weight:500">
+          <div>${p.period}</div>
+          ${cpData?.planDate?`<div style="font-size:10px;color:var(--text3)">${cpData.planDate}</div>`:''}
+        </td>
+        ${td(fmt(p.gross)+'<br><span style="font-size:10px;color:var(--text3)">'+(cpData?'含稅'+fmt(cpData.amt):'')+'</span>','color:var(--text2)')}
+        ${td(fmt(aAmt)+'<br><span style="font-size:10px;color:var(--text3)">'+coPct+'%</span>','color:var(--accent2)')}
+        ${td(fmt(execAmt),'color:var(--accent);font-weight:600')}
+        ${bCells}
+        ${bNames.length&&cNames.length?`<td style="${b};background:var(--surface2)"></td>`:''}
+        ${cCells}
+        <td style="padding:4px 8px;${b};text-align:center">
+          <button onclick="editLbPhase('${c.id}','${p.id}')"
+            style="font-size:11px;padding:3px 10px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;white-space:nowrap">
+            編輯
+          </button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    // 合計
+    const totA=c.phases.reduce((s,p)=>{const cop=p.coPct||50;return s+Math.round(p.gross*.05)+Math.round(p.gross*cop/100);},0);
+    const totEx=c.phases.reduce((s,p)=>s+(p.gross-Math.round(p.gross*(p.coPct||50)/100)),0);
+    const totB=bNames.map(bn=>c.phases.reduce((s,p)=>{const f=(p.bPersons||[]).find(x=>x.name===bn.name&&x.role===bn.role);return s+(f?f.amt:0);},0));
+    const totC=cNames.map(cn=>c.phases.reduce((s,p)=>{const f=(p.cPersons||[]).find(x=>x.name===cn.name&&x.role===cn.role);return s+(f?f.amt:0);},0));
+
+    let tfoot=`<tr style="background:var(--surface2);font-weight:700">
+      <td style="padding:6px 10px;${b};font-size:11px;color:var(--text2)">合計</td>
+      ${td(fmt(totalGross))}
+      ${td(fmt(totA),'color:var(--accent2)')}
+      ${td(fmt(totEx),'color:var(--accent)')}
+      ${totB.map(t=>td(t?fmt(t):'—','color:var(--accent)')).join('')}
+      ${bNames.length&&cNames.length?`<td style="${b};background:var(--surface2)"></td>`:''}
+      ${totC.map(t=>td(t?fmt(t):'—','color:var(--accent3)')).join('')}
+      <td style="${b};background:var(--surface2)"></td>
+    </tr>`;
+
+    const tbl=`<div style="overflow-x:auto;margin-top:8px">
+      <table style="border-collapse:collapse;font-size:12px;width:100%">
+        <thead>${thead}</thead><tbody>${tbody}</tbody><tfoot>${tfoot}</tfoot>
+      </table>
+
+    </div>`;
+
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${lcCollapsed?'0':'6px'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <button onclick="event.stopPropagation();moveLegacyCase('${c.id}',-1)" style="font-size:10px;padding:0 4px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;line-height:1.4">▲</button>
+            <button onclick="event.stopPropagation();moveLegacyCase('${c.id}',1)"  style="font-size:10px;padding:0 4px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--text3);cursor:pointer;line-height:1.4">▼</button>
+          </div>
+          <span style="${m};font-size:12px;color:var(--text3)">${cIdx}</span>
+          <span style="font-weight:600;font-size:14px">${c.client}</span>
+          ${c.period?`<span class="tag">${c.period}</span>`:''}
+          ${c.total?`<span style="font-size:11px;color:var(--text3)">合約 $${fmt(c.total)}</span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="${m};font-size:15px;color:var(--accent);font-weight:700">$${fmt(totalGross)}</span>
+          <button class="btn btn-secondary btn-sm" onclick="addLbPhaseFor('${c.id}')">＋ 新增期次</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLegacyCase('${c.id}')">刪除</button>
+          <button onclick="toggleLcCollapse('${c.id}')" style="font-size:16px;padding:2px 8px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text3);cursor:pointer;line-height:1">${lcCollapsed?'▶':'▼'}</button>
+        </div>
+      </div>
+      <div style="display:${lcCollapsed?'none':'block'}">${tbl}</div>`;
+    wrap.appendChild(card);
+  });
+}
+
+
+function addLbPhaseFor(cid) {
+  const c = S.legacyCases.find(x=>x.id===cid);
+  if(!c) return;
+  _lbCaseId = cid;
+  document.getElementById('lb-client').value = c.client;
+  _openLbModal(c);
+}
+
+function toggleLcCollapse(id) {
+  if(!S.lcCollapsed) S.lcCollapsed={};
+  S.lcCollapsed[id] = !S.lcCollapsed[id];
+  persist(); renderLegacyCases();
+}
+
+function moveLegacyCase(id, dir) {
+  if(!S.legacyCases) return;
+  const idx = S.legacyCases.findIndex(x=>x.id===id);
+  const target = idx+dir;
+  if(target<0||target>=S.legacyCases.length) return;
+  [S.legacyCases[idx],S.legacyCases[target]]=[S.legacyCases[target],S.legacyCases[idx]];
+  persist(); renderLegacyCases();
+}
+
+function deleteLbPhase(cid, phaseId) {
+  if(!confirm('確定刪除此期次？')) return;
+  const c = S.legacyCases.find(x=>x.id===cid);
+  if(!c) return;
+  c.phases = c.phases.filter(x=>x.id!==phaseId);
+  persist(); renderLegacyCases(); toast('已刪除');
+}
+
+function deleteLegacyCase(id) {
+  if(!confirm('確認刪除此舊制案？')) return;
+  S.legacyCases = S.legacyCases.filter(x=>x.id!==id);
+  persist(); renderLegacyCases(); toast('已刪除');
+}
+
+// ══════════════════════════════════════
+// 請款追蹤 → 獎金試算 連動
+// ══════════════════════════════════════
+
+// B方案：從請款追蹤直接跳到獎金試算
+function jumpToBonus(cid, phaseIdx, mode) {
+  const c = (S.contracts||[]).find(x=>x.id===cid);
+  if(!c||!c.phases[phaseIdx]) return;
+  const p = c.phases[phaseIdx];
+  const clientName = (c.builder?c.builder+'・':'')+c.name;
+  const untaxed = Math.round(p.amt/1.05);
+
+  // 切換到獎金試算頁
+  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+  document.getElementById('pg-bonus').classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+
+  // 切換到對應制度
+  switchBonusMode(mode);
+
+  if(mode==='legacy') {
+    // 找或建舊制案子
+    if(!S.legacyCases) S.legacyCases=[];
+    let lc = S.legacyCases.find(x=>x.client===clientName);
+    if(!lc) {
+      lc = {id:'lc'+Date.now(), client:clientName, period:c.period||'', total:c.total||0, phases:[]};
+      S.legacyCases.push(lc);
+    }
+    // 更新入口欄位
+    document.getElementById('lb-client').value = clientName;
+    document.getElementById('lb-contract-period').value = c.period||'';
+    document.getElementById('lb-contract-total').value = c.total||'';
+    // 直接開 modal 並帶入期款
+    _openLbModal(lc);
+    // 帶入金額
+    setTimeout(()=>{
+      document.getElementById('lb-period').value = '第'+p.no+'期';
+      document.getElementById('lb-gross').value = untaxed;
+      document.getElementById('lb-gross-tax').value = p.amt;
+      _lbContractPhaseRef = cid+'|'+phaseIdx;
+      lbCalc();
+      // 更新期款選單並選中
+      fillPhaseSelect('lb', clientName);
+      document.getElementById('lb-phase-select').value = cid+'|'+phaseIdx;
+    }, 50);
+
+  } else {
+    // 新制
+    if(!S.newCases) S.newCases=[];
+    let nc = S.newCases.find(x=>x.client===clientName);
+    if(!nc) {
+      nc = {id:'nc'+Date.now(), client:clientName, period:c.period||'', total:c.total||0, phases:[]};
+      S.newCases.push(nc);
+    }
+    document.getElementById('b-client').value = clientName;
+    document.getElementById('b-contract-period').value = c.period||'';
+    document.getElementById('b-contract-total').value = c.total||'';
+    _openNbModal(nc);
+    setTimeout(()=>{
+      document.getElementById('nb-period').value = '第'+p.no+'期';
+      document.getElementById('nb-gross').value = untaxed;
+      _nbContractPhaseRef = cid+'|'+phaseIdx;
+      nbCalc();
+      fillPhaseSelect('nb', clientName);
+      document.getElementById('nb-phase-select').value = cid+'|'+phaseIdx;
+    }, 50);
+  }
+  toast(clientName+' 第'+p.no+'期 已帶入');
+}
+
+// 重新整理兩個選案下拉
+function refreshContractSelect() {
+  const contracts = S.contracts||[];
+  const makeOpts = (selId) => {
+    const sel = document.getElementById(selId);
+    if(!sel) return;
+    sel.innerHTML = '<option value="">— 選擇案子 —</option>';
+    contracts.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = (c.builder?c.builder+'・':'')+c.name+' ('+c.co+')';
+      sel.appendChild(opt);
+    });
+  };
+  makeOpts('lb-contract-select');
+  makeOpts('nb-contract-select');
+}
+
+// 舊制：選案子後自動同步所有期次
+function lbFillFromContract() {
+  const cid = document.getElementById('lb-contract-select').value;
+  if(!cid) return;
+  const c = (S.contracts||[]).find(x=>x.id===cid);
+  if(!c) return;
+  const name = (c.builder?c.builder+'・':'')+c.name;
+
+  // 找或建立 legacyCase
+  if(!S.legacyCases) S.legacyCases=[];
+  let lc = S.legacyCases.find(x=>x.client===name);
+  if(!lc) {
+    lc = {id:'lc'+Date.now(), client:name, period:c.period||'', total:c.total||0, phases:[]};
+    S.legacyCases.push(lc);
+  }
+
+  // 把請款追蹤期次帶入：先給舊期次補 ref，再更新或新增
+  const noRefPhases = lc.phases.filter(x=>!x.contractPhaseRef);
+  noRefPhases.forEach((lp, i) => {
+    if(i < c.phases.length) lp.contractPhaseRef = cid+'|'+i;
+  });
+
+  c.phases.forEach((p, i) => {
+    const ref = cid+'|'+i;
+    const already = lc.phases.find(x=>x.contractPhaseRef===ref);
+    if(already) {
+      // 只更新金額和日期，保留人員和比例
+      already.gross = p.amt;
+      already.grossTax = Math.round(p.amt*1.05);
+      already.planDate = p.planDate||'';
+      already.period = '第'+p.no+'期';
+    }
+    // 不再自動新增：避免重複。用「+新增期次」按鈕手動新增
+  });
+
+  persist();
+  renderLegacyCases();
+  document.getElementById('lb-contract-select').value = '';
+  document.getElementById('lb-client').value = name;
+  document.getElementById('lb-contract-period').value = c.period||'';
+  document.getElementById('lb-contract-total').value = c.total||'';
+  toast('已帶入「'+name+'」'+c.phases.length+'筆期款，點編輯填分配比例');
+}
+
+function nbFillFromContract() {
+  const cid = document.getElementById('nb-contract-select').value;
+  if(!cid) return;
+  const c = (S.contracts||[]).find(x=>x.id===cid);
+  if(!c) return;
+  const name = (c.builder?c.builder+'・':'')+c.name;
+  document.getElementById('b-client').value = name;
+  document.getElementById('b-contract-period').value = c.period||'';
+  document.getElementById('b-contract-total').value = c.total||'';
+  document.getElementById('nb-contract-select').value = '';
+  toast('已帶入：'+name);
+}
+
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  loadState();
+  renderContracts();
+  renderLegacyCases();
+  if(S.newCases&&S.newCases.length) renderNewCases();
+  refreshContractSelect();
+  // 切到任何頁面都重新整理選案下拉
+  document.querySelectorAll('.nav-tab').forEach(t=>{
+    t.addEventListener('click', ()=>{ setTimeout(refreshContractSelect, 100); });
+  });
+  renderPassbook();
+  renderLedger();
+  renderForecast();
+  renderStaffOverview();
+  renderProjList();
+  await loadFromSheets();
+});
+</script>
+</body>
+</html>
